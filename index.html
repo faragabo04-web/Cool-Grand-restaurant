@@ -1,0 +1,3554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FAFAF7">
+<meta name="color-scheme" content="light">
+<title>Cool Grand Restaurant — Damac Hills 2, Dubai</title>
+<!-- Resource hints: DNS + connections for CDN assets -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link rel="dns-prefetch" href="https://images.unsplash.com">
+
+<!-- Slimmed font: only weights actually used (700,900 normal + 400 italic) -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" onload="this.rel='stylesheet'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"></noscript>
+
+<!-- Preload LCP hero image (critical path) -->
+<link rel="preload" as="image" href="assets/images/cool-grand-hero-premium.png" fetchpriority="high">
+
+<style>
+/* ═══════════════════════════════════
+   DESIGN TOKENS — WARM BRASSERIE LIGHT
+═══════════════════════════════════ */
+:root {
+  --bg:        #FAFAF7;
+  --white:     #FFFFFF;
+  --surface:   #F4F0E9;
+  --surface-2: #EDE8DF;
+  --card:      #FFFFFF;
+
+  --amber:     #C98A2A;
+  --amber-l:   #DDA84C;
+  --amber-xl:  #FBF2E0;
+  --amber-d:   #9B6618;
+  --amber-text:#7A4E10;
+
+  --text:      #1A1510;
+  --text-2:    #5E5248;
+  --text-3:    #9C8E80;
+  --border:    #E5DDD2;
+  --border-2:  #D4C8BA;
+
+  --green:     #3B6E4B;
+  --green-bg:  #EEF6F1;
+  --red:       #B84040;
+  --red-bg:    #FEF0F0;
+  --blue:      #2E5C8A;
+
+  --shadow-sm: 0 1px 3px rgba(26,21,16,.06), 0 1px 2px rgba(26,21,16,.04);
+  --shadow-md: 0 4px 16px rgba(26,21,16,.08), 0 1px 4px rgba(26,21,16,.04);
+  --shadow-lg: 0 12px 40px rgba(26,21,16,.12), 0 4px 12px rgba(26,21,16,.06);
+  --shadow-xl: 0 24px 64px rgba(26,21,16,.14), 0 8px 20px rgba(26,21,16,.06);
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --nav-h: 76px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:16px; }
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Plus Jakarta Sans', sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img { display:block; max-width:100%; }
+a { text-decoration:none; color:inherit; }
+button { cursor:pointer; font-family:inherit; border:none; }
+
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:var(--surface); }
+::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:2px; }
+::-webkit-scrollbar-thumb:hover { background:var(--amber); }
+
+/* ═══════════════════════════════════
+   ORDER SYSTEM — PATCH v3.1
+   (Appended — no existing styles changed)
+═══════════════════════════════════ */
+
+/* ── Cart FAB ── */
+.cart-fab {
+  position:fixed; bottom:2rem; right:2rem; z-index:800;
+  display:flex; align-items:center; gap:.6rem;
+  background:var(--amber); color:#fff;
+  padding:.75rem 1.25rem; border-radius:100px;
+  font-size:.875rem; font-weight:700;
+  box-shadow:0 8px 28px rgba(201,138,42,.45);
+  border:none; cursor:pointer;
+  transition:background .3s,transform .3s,box-shadow .3s,opacity .3s;
+  transform:translateY(100px); opacity:0;
+}
+.cart-fab.visible { transform:translateY(0); opacity:1; }
+.cart-fab:hover { background:var(--amber-d); transform:translateY(-2px) scale(1.03); box-shadow:0 12px 36px rgba(201,138,42,.5); }
+.cart-fab-icon { font-size:1.1rem; }
+.cart-fab-count {
+  background:rgba(255,255,255,.25); color:#fff;
+  width:22px; height:22px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.72rem; font-weight:800; margin-left:.1rem;
+}
+
+/* ── Modal Overlay ── */
+.om-overlay {
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(26,21,16,.55);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  padding:1rem;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s ease;
+}
+.om-overlay.open { opacity:1; pointer-events:all; }
+
+/* ── Modal Box ── */
+.om-box {
+  background:var(--white); border-radius:var(--radius-xl);
+  width:100%; max-width:580px; max-height:90svh;
+  overflow-y:auto; overflow-x:hidden;
+  box-shadow:var(--shadow-xl);
+  transform:translateY(24px) scale(.97);
+  transition:transform .35s cubic-bezier(.34,1.3,.64,1);
+  position:relative;
+}
+.om-overlay.open .om-box { transform:translateY(0) scale(1); }
+.om-box::-webkit-scrollbar { width:3px; }
+
+/* ── Modal Header ── */
+.om-header {
+  padding:1.75rem 2rem 1.25rem;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; background:var(--white); z-index:2;
+  display:flex; align-items:flex-start; justify-content:space-between; gap:1rem;
+}
+.om-header-text {}
+.om-title {
+  font-family:'Fraunces', serif; font-weight:900; font-size:1.4rem;
+  color:var(--text); letter-spacing:-.5px; line-height:1.1;
+}
+.om-subtitle { font-size:.775rem; color:var(--text-3); margin-top:.25rem; }
+.om-close {
+  width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--text-2); font-size:1.1rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s,border-color .2s,color .2s,box-shadow .2s; margin-top:.1rem;
+}
+.om-close:hover { background:var(--red-bg); color:var(--red); border-color:rgba(184,64,64,.25); }
+
+/* ── Cart Summary inside modal ── */
+.om-cart {
+  margin:1.25rem 2rem;
+  background:var(--surface); border-radius:var(--radius-md);
+  border:1px solid var(--border); overflow:hidden;
+}
+.om-cart-header {
+  padding:.7rem 1rem; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border); background:var(--surface-2);
+}
+.om-cart-title { font-size:.7rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-2); }
+.om-cart-clear {
+  font-size:.7rem; color:var(--amber-text); font-weight:600;
+  background:none; border:none; cursor:pointer; transition:color .2s;
+}
+.om-cart-clear:hover { color:var(--red); }
+.om-cart-list { padding:.5rem 0; max-height:160px; overflow-y:auto; }
+.om-cart-item {
+  display:flex; align-items:center; gap:.65rem;
+  padding:.5rem 1rem; transition:background .15s;
+}
+.om-cart-item:hover { background:rgba(201,138,42,.04); }
+.om-cart-item-name { flex:1; font-size:.825rem; color:var(--text); font-weight:500; }
+.om-cart-item-price { font-size:.8rem; color:var(--amber-text); font-weight:600; font-family:'Fraunces',serif; }
+.om-cart-item-remove {
+  width:20px; height:20px; border-radius:50%; background:transparent;
+  border:1px solid var(--border); color:var(--text-3); font-size:.7rem;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:background .2s,border-color .2s,color .2s,box-shadow .2s; flex-shrink:0;
+}
+.om-cart-item-remove:hover { background:var(--red-bg); color:var(--red); border-color:rgba(184,64,64,.2); }
+.om-cart-empty {
+  padding:1.25rem 1rem; text-align:center;
+  font-size:.8rem; color:var(--text-3); font-style:italic;
+}
+.om-cart-footer {
+  padding:.75rem 1rem; border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.om-cart-total-label { font-size:.75rem; color:var(--text-3); font-weight:500; }
+.om-cart-total-val { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700; color:var(--amber); }
+
+/* ── Form ── */
+.om-form { padding:0 2rem 2rem; }
+.om-form-group { margin-top:1.1rem; }
+.om-label {
+  display:block; font-size:.7rem; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--text-2); margin-bottom:.45rem;
+}
+.om-label .req { color:var(--amber); margin-left:2px; }
+.om-input, .om-textarea {
+  width:100%; padding:.75rem .95rem;
+  background:var(--bg); border:1.5px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text);
+  font-family:'Plus Jakarta Sans', sans-serif; font-size:.9rem;
+  transition:border-color .2s, box-shadow .2s;
+  outline:none; resize:none;
+}
+.om-input:focus, .om-textarea:focus {
+  border-color:var(--amber);
+  box-shadow:0 0 0 3px rgba(201,138,42,.12);
+}
+.om-input.error, .om-textarea.error { border-color:var(--red); box-shadow:0 0 0 3px rgba(184,64,64,.1); }
+.om-input::placeholder, .om-textarea::placeholder { color:var(--text-3); }
+.om-textarea { height:80px; }
+.om-form-row { display:grid; grid-template-columns:1fr 1fr; gap:.85rem; }
+
+/* ── Quick-add items ── */
+.om-quick { margin-top:1.25rem; }
+.om-quick-label { font-size:.7rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--text-2); margin-bottom:.6rem; }
+.om-quick-grid {
+  display:flex; flex-wrap:wrap; gap:.4rem;
+  max-height:140px; overflow-y:auto; padding:.1rem;
+}
+.om-quick-chip {
+  display:flex; align-items:center; gap:.4rem;
+  padding:.35rem .75rem; border-radius:100px;
+  border:1.5px solid var(--border); background:var(--white);
+  font-size:.75rem; font-weight:500; color:var(--text-2);
+  cursor:pointer; transition:background .2s,border-color .2s,color .2s,box-shadow .2s; white-space:nowrap;
+  user-select:none;
+}
+.om-quick-chip:hover { border-color:var(--amber); color:var(--amber-text); background:var(--amber-xl); }
+.om-quick-chip.in-cart { background:var(--amber-xl); border-color:var(--amber); color:var(--amber-text); }
+.om-quick-chip-price { opacity:.65; font-size:.7rem; }
+
+/* ── Submit area ── */
+.om-actions { margin-top:1.5rem; display:flex; flex-direction:column; gap:.65rem; }
+.om-submit {
+  width:100%; padding:1rem; border-radius:var(--radius-sm);
+  background:var(--amber); color:#fff; border:none;
+  font-family:'Plus Jakarta Sans', sans-serif;
+  font-size:1rem; font-weight:700; cursor:pointer;
+  transition:background .25s,transform .25s,box-shadow .25s; letter-spacing:.2px;
+  box-shadow:0 4px 14px rgba(201,138,42,.3);
+  display:flex; align-items:center; justify-content:center; gap:.5rem;
+}
+.om-submit:hover { background:var(--amber-d); transform:translateY(-1px); box-shadow:0 8px 24px rgba(201,138,42,.4); }
+.om-submit:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.om-email-btn {
+  width:100%; padding:.75rem; border-radius:var(--radius-sm);
+  background:transparent; color:var(--text-2); border:1.5px solid var(--border);
+  font-family:'Plus Jakarta Sans', sans-serif;
+  font-size:.85rem; font-weight:500; cursor:pointer;
+  transition:background .2s,border-color .2s,color .2s,box-shadow .2s; letter-spacing:.2px;
+  display:flex; align-items:center; justify-content:center; gap:.5rem;
+}
+.om-email-btn:hover { border-color:var(--border-2); color:var(--text); }
+.om-footnote {
+  text-align:center; font-size:.7rem; color:var(--text-3); margin-top:.5rem;
+}
+
+/* ── Success state ── */
+.om-success {
+  padding:3rem 2rem; text-align:center; display:none;
+}
+.om-success.show { display:block; }
+.om-success-icon { font-size:3.5rem; margin-bottom:1rem; }
+.om-success-title { font-family:'Fraunces',serif; font-size:1.5rem; font-weight:900; color:var(--text); letter-spacing:-.5px; }
+.om-success-text { font-size:.875rem; color:var(--text-3); margin-top:.5rem; line-height:1.7; }
+.om-success-back { margin-top:1.5rem; }
+
+/* ── Qty badge on mi-btn ── */
+.mi-btn[data-qty]:not([data-qty="0"])::after {
+  content:attr(data-qty);
+  position:absolute; top:-5px; right:-5px;
+  width:16px; height:16px; border-radius:50%;
+  background:var(--amber); color:#fff;
+  font-size:.55rem; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.mi-btn { position:relative; }
+
+/* ── Nav cart badge ── */
+.nav-order-wrap { position:relative; display:inline-flex; }
+.nav-cart-badge {
+  position:absolute; top:-6px; right:-6px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--red); color:#fff;
+  font-size:.6rem; font-weight:800;
+  display:none; align-items:center; justify-content:center;
+  border:2px solid var(--white);
+}
+.nav-cart-badge.has-items { display:flex; }
+
+/* ── Responsive ── */
+@media (max-width:640px) {
+  .om-box { border-radius:var(--radius-lg) var(--radius-lg) 0 0; }
+  .om-overlay { align-items:flex-end; padding:0; }
+  .om-form-row { grid-template-columns:1fr; }
+  .cart-fab { bottom:1.25rem; right:1.25rem; }
+}
+
+/* ═══ UTILS ═══ */
+.container { max-width:1360px; margin:0 auto; padding:0 40px; }
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+
+/* ═══════════════════════════════════
+   NAVBAR
+═══════════════════════════════════ */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:900;
+  height:var(--nav-h);
+  background:rgba(255,255,252,.86);
+  backdrop-filter:blur(24px) saturate(1.08);
+  -webkit-backdrop-filter:blur(24px) saturate(1.08);
+  border-bottom:1px solid rgba(212,200,186,.72);
+  transition:box-shadow .3s;
+}
+.nav.elevated { box-shadow:0 12px 34px rgba(26,21,16,.08); }
+.nav-inner {
+  height:100%; display:flex; align-items:center;
+  justify-content:space-between; gap:1.5rem;
+}
+.nav-brand { display:flex; align-items:center; gap:12px; }
+.nav-logo {
+  width:42px; height:42px; background:#1A1510;
+  border:1px solid rgba(201,138,42,.38);
+  border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-family:'Fraunces', serif; font-size:1rem; font-weight:900;
+  color:#F7E2B5; letter-spacing:-.5px; flex-shrink:0;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 8px 20px rgba(26,21,16,.12);
+}
+.nav-name { line-height:1.15; }
+.nav-name strong {
+  display:block; font-family:'Fraunces', serif; font-weight:700;
+  font-size:1rem; color:var(--text); letter-spacing:-.3px;
+}
+.nav-name em {
+  display:block; font-style:normal; font-size:.65rem;
+  color:var(--amber-text); letter-spacing:2.6px; font-weight:600;
+  text-transform:uppercase;
+}
+.nav-links {
+  display:flex; align-items:center; gap:.2rem; list-style:none;
+  padding:.35rem; border:1px solid rgba(229,221,210,.82);
+  border-radius:999px; background:rgba(244,240,233,.58);
+}
+.nav-links a {
+  display:block; padding:.48rem .82rem; border-radius:999px;
+  font-size:.82rem; font-weight:600; color:var(--text-2);
+  transition:background .2s,color .2s; letter-spacing:.2px;
+}
+.nav-links a:hover { color:var(--amber-text); background:rgba(255,255,255,.7); }
+.nav-actions { display:flex; align-items:center; gap:.75rem; }
+.nav-lang {
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.5rem .9rem; border-radius:999px;
+  background:#111827; color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 10px 24px rgba(17,24,39,.14);
+  font-size:.78rem; font-weight:800;
+}
+.nav-lang-icon { font-size:.95rem; line-height:1; opacity:.9; }
+.nav-lang-divider {
+  width:1px; height:14px; background:rgba(255,255,255,.22);
+}
+.nav-lang span:last-child { direction:rtl; }
+.nav-lang.is-ar {
+  border-color:rgba(201,138,42,.35);
+  background:var(--amber-xl);
+  color:var(--amber-text);
+}
+.nav-wa {
+  display:flex; align-items:center; justify-content:center;
+  padding:.55rem 1rem; border-radius:999px;
+  background:rgba(255,255,255,.62); color:var(--green);
+  font-size:.78rem; font-weight:700; border:1px solid rgba(59,110,75,.18);
+  transition:background .2s,border-color .2s,color .2s,box-shadow .2s;
+}
+.nav-wa:hover { background:var(--green-bg); }
+.nav-wa svg { flex-shrink:0; }
+.nav-order {
+  padding:.62rem 1.3rem; border-radius:999px;
+  background:var(--amber); color:#fff; font-size:.875rem;
+  font-weight:600; transition:background .2s,border-color .2s,color .2s,box-shadow .2s; letter-spacing:.2px;
+}
+.nav-order:hover { background:var(--amber-d); transform:translateY(-1px); box-shadow:0 4px 14px rgba(201,138,42,.35); }
+.nav-hamburger { display:none; }
+
+/* ═══════════════════════════════════
+   HERO
+═══════════════════════════════════ */
+.hero {
+  min-height:100svh; padding-top:var(--nav-h);
+  display:block;
+  position:relative; overflow:hidden;
+  background:var(--white);
+}
+/* Lightweight atmosphere overlay */
+.hero::before {
+  content:''; position:absolute; inset:var(--nav-h) 0 0; z-index:1;
+  background:
+    linear-gradient(90deg,
+      rgba(255,255,252,.66) 0%,
+      rgba(255,255,252,.42) 34%,
+      rgba(255,255,252,.08) 58%,
+      rgba(255,255,252,.02) 100%),
+    linear-gradient(180deg,
+      rgba(255,255,252,.14) 0%,
+      rgba(255,255,252,.06) 48%,
+      rgba(255,255,252,.2) 100%);
+  pointer-events:none;
+}
+.hero-left {
+  min-height:calc(100svh - var(--nav-h));
+  max-width:760px;
+  padding:clamp(4rem,7vw,7rem) 3rem 4rem 5%;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; z-index:2;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--amber-xl); border:1px solid rgba(201,138,42,.2);
+  color:var(--amber-text); padding:.4rem 1rem; border-radius:100px;
+  font-size:.7rem; font-weight:600; letter-spacing:2px;
+  text-transform:uppercase; width:fit-content; margin-bottom:1.75rem;
+  animation:fadeSlideUp .6s ease both;
+}
+.hero-badge-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--amber); animation:pulse 1.5s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+.hero-h1 {
+  font-family:'Fraunces', serif; font-weight:900;
+  font-size:clamp(3rem,5.5vw,5.5rem);
+  line-height:.95; letter-spacing:-2px; color:var(--text);
+  animation:fadeSlideUp .6s .08s ease both;
+}
+.hero-h1 .italic { font-style:italic; color:var(--amber); }
+.hero-tagline {
+  margin-top:1.5rem; font-size:1.05rem; color:var(--text-2);
+  line-height:1.75; font-weight:400; max-width:440px;
+  animation:fadeSlideUp .6s .16s ease both;
+}
+.hero-cuisines {
+  display:flex; flex-wrap:wrap; gap:.4rem; margin-top:1.5rem;
+  animation:fadeSlideUp .6s .22s ease both;
+}
+.hero-cuisine-tag {
+  font-size:.72rem; color:var(--text-3); padding:.3rem .7rem;
+  border:1px solid var(--border); border-radius:100px;
+  background:var(--surface); font-weight:500; letter-spacing:.3px;
+}
+.hero-actions {
+  display:flex; gap:.85rem; flex-wrap:wrap; margin-top:2.5rem;
+  animation:fadeSlideUp .6s .28s ease both;
+}
+.btn-primary {
+  padding:.875rem 2rem; background:var(--amber); color:#fff;
+  border-radius:var(--radius-sm); font-size:.95rem; font-weight:600;
+  letter-spacing:.2px; transition:background .25s,transform .25s,box-shadow .25s;
+  box-shadow:0 4px 14px rgba(201,138,42,.3);
+}
+.btn-primary:hover { background:var(--amber-d); transform:translateY(-2px); box-shadow:0 8px 24px rgba(201,138,42,.38); }
+.btn-secondary {
+  padding:.875rem 2rem; background:var(--white); color:var(--text);
+  border:1px solid var(--border-2); border-radius:var(--radius-sm);
+  font-size:.95rem; font-weight:500; transition:background .25s,transform .25s,box-shadow .25s;
+}
+.btn-secondary:hover { border-color:var(--amber); color:var(--amber); }
+
+/* Hero Stats */
+.hero-stats {
+  display:flex; gap:2.5rem; margin-top:3rem; padding-top:2rem;
+  border-top:1px solid var(--border);
+  animation:fadeSlideUp .6s .36s ease both;
+}
+.hero-stat {}
+.stat-val {
+  font-family:'Fraunces', serif; font-size:2.25rem;
+  font-weight:700; color:var(--text); line-height:1;
+  letter-spacing:-1px;
+}
+.stat-val .unit { font-size:1.2rem; color:var(--amber); }
+.stat-label { font-size:.72rem; color:var(--text-3); letter-spacing:1.5px; text-transform:uppercase; margin-top:.3rem; }
+.stat-live {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:.65rem; color:var(--green); font-weight:600;
+  letter-spacing:1px; margin-top:.2rem;
+}
+.stat-live-dot {
+  width:5px; height:5px; background:var(--green);
+  border-radius:50%; animation:pulse 1.5s ease infinite;
+}
+.hero-divider { width:1px; background:var(--border); align-self:stretch; }
+
+/* Hero Image Side */
+.hero-right {
+  position:absolute; inset:var(--nav-h) 0 0; z-index:0;
+  overflow:hidden;
+  background:#d8d1c6;
+}
+.hero-right::before {
+  content:'';
+  position:absolute; inset:-24px;
+  background:url("assets/images/cool-grand-hero-premium.png") center/cover no-repeat;
+  filter:blur(18px) saturate(1.04) contrast(1.02);
+  opacity:.6;
+  transform:scale(1.06);
+}
+.hero-img {
+  position:relative; z-index:1;
+  width:100%; height:100%; object-fit:contain;
+  object-position:center center;
+  padding:clamp(.75rem,2vw,1.75rem);
+  filter:saturate(1.1) contrast(1.08) brightness(.94);
+  transform:scale(1);
+  transition:transform .65s cubic-bezier(.22,1,.36,1), filter .65s ease;
+  animation:none;
+}
+.hero:hover .hero-img {
+  transform:scale(1.025) translateY(-4px);
+  filter:saturate(1.16) contrast(1.12) brightness(.96);
+}
+.hero-img-overlay {
+  position:absolute; inset:0;
+  background:
+    linear-gradient(90deg, rgba(255,255,252,.46) 0%, rgba(255,255,252,.2) 36%, rgba(26,21,16,.12) 76%, rgba(26,21,16,.22) 100%),
+    linear-gradient(180deg, rgba(26,21,16,.02) 0%, rgba(26,21,16,.18) 100%);
+  z-index:2;
+  pointer-events:none;
+}
+.hero-float-card {
+  position:absolute; bottom:2.5rem; left:2rem;
+  background:rgba(255,255,255,.96); backdrop-filter:blur(12px);
+  border-radius:var(--radius-md); padding:1rem 1.25rem;
+  box-shadow:var(--shadow-lg);
+  animation:fadeSlideUp .7s .5s ease both;
+  border:1px solid rgba(255,255,255,.8);
+  display:flex; align-items:center; gap:.85rem;
+  z-index:2;
+}
+.hero .hero-float-card { display:none; }
+.float-card-icon {
+  width:48px; height:48px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:#1A1510; color:#F7E2B5;
+  border:1px solid rgba(201,138,42,.35);
+  font-family:'Fraunces',serif; font-size:1.05rem; font-weight:900;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.float-card-text strong { display:block; font-size:.9rem; font-weight:700; color:var(--text); }
+.float-card-text span { font-size:.75rem; color:var(--text-3); }
+.float-card-stars { color:var(--amber-text); font-size:.72rem; letter-spacing:1.4px; text-transform:uppercase; margin-top:.15rem; }
+/* scaleIn removed — caused expensive paint + LCP delay */
+
+/* ═══════════════════════════════════
+   FOOD STRIP MARQUEE
+═══════════════════════════════════ */
+.strip-wrap {
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  overflow:hidden; padding:.75rem 0;
+}
+.strip-track {
+  display:flex; align-items:center; gap:0;
+  width:max-content; animation:stripScroll 40s linear infinite;
+}
+.strip-track:hover { animation-play-state:paused; }
+.strip-item {
+  display:flex; align-items:center; gap:.85rem;
+  padding:0 1.75rem; flex-shrink:0;
+}
+.strip-img {
+  width:52px; height:52px; border-radius:50%;
+  object-fit:cover; border:2px solid var(--white);
+  box-shadow:var(--shadow-sm); flex-shrink:0;
+}
+.strip-name {
+  font-size:.8rem; font-weight:600; color:var(--text-2);
+  white-space:nowrap; letter-spacing:.2px;
+}
+.strip-sep {
+  width:4px; height:4px; background:var(--amber);
+  border-radius:50%; flex-shrink:0; opacity:.5;
+}
+@keyframes stripScroll { to { transform:translateX(-50%); } }
+
+/* ═══════════════════════════════════
+   LAYOUT — SIDEBAR + CONTENT
+═══════════════════════════════════ */
+.main-layout {
+  display:grid;
+  grid-template-columns:240px 1fr;
+  align-items:start;
+  max-width:1360px; margin:0 auto;
+  padding:0 40px;
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar {
+  position:sticky; top:calc(var(--nav-h) + 24px);
+  padding:2rem 0 2rem 0;
+  max-height:calc(100svh - var(--nav-h) - 48px);
+  overflow-y:auto; overflow-x:hidden;
+}
+.sidebar::-webkit-scrollbar { width:2px; }
+.sidebar-title {
+  font-size:.62rem; font-weight:700; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text-3);
+  padding:0 1rem 1rem; display:block;
+}
+.sidebar-nav { list-style:none; }
+.sidebar-nav-item { margin-bottom:2px; }
+.sidebar-nav-btn {
+  display:flex; align-items:center; gap:.65rem;
+  width:100%; background:transparent;
+  padding:.65rem 1rem; border-radius:var(--radius-sm);
+  font-size:.875rem; font-weight:500; color:var(--text-2);
+  transition:background .2s,border-color .2s,color .2s,box-shadow .2s; text-align:right;
+}
+.sidebar-nav-btn:hover { background:var(--surface); color:var(--text); }
+.sidebar-nav-btn.active {
+  background:var(--amber-xl); color:var(--amber-text);
+  font-weight:600;
+}
+.sidebar-nav-btn.active .snb-icon { opacity:1; box-shadow:0 0 0 2px rgba(201,138,42,.22); }
+.snb-icon {
+  width:22px; height:22px; border-radius:50%;
+  overflow:hidden; flex-shrink:0; opacity:.82;
+  border:1px solid rgba(255,255,255,.8);
+  box-shadow:0 2px 8px rgba(26,21,16,.12);
+  transition:opacity .2s, box-shadow .2s, transform .2s;
+  background:var(--surface-2);
+}
+.snb-icon img {
+  width:100%; height:100%; object-fit:cover;
+  display:block;
+}
+.sidebar-nav-btn:hover .snb-icon { opacity:1; transform:scale(1.04); }
+.snb-count {
+  margin-left:auto; font-size:.65rem; font-weight:700;
+  color:var(--text-3); background:var(--surface-2);
+  padding:.1rem .45rem; border-radius:100px;
+}
+.sidebar-nav-btn.active .snb-count { background:rgba(201,138,42,.15); color:var(--amber-d); }
+.sidebar-divider { height:1px; background:var(--border); margin:1rem; }
+.sidebar-order-block { margin:1rem; }
+.sidebar-order-block p { font-size:.7rem; color:var(--text-3); margin-bottom:.75rem; letter-spacing:.5px; }
+.sidebar-wa-btn {
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  width:100%; padding:.65rem; border-radius:var(--radius-sm);
+  background:var(--green-bg); color:var(--green);
+  font-size:.8rem; font-weight:600;
+  border:1px solid rgba(59,110,75,.18); transition:background .2s,border-color .2s,color .2s,box-shadow .2s;
+}
+.sidebar-wa-btn:hover { background:#ddf0e6; }
+
+/* ═══ CONTENT ═══ */
+.content { padding:3rem 0 3rem 2.5rem; min-width:0; }
+
+/* ═══════════════════════════════════
+   SECTION HEADERS (shared)
+═══════════════════════════════════ */
+.sec-header { margin-bottom:2.5rem; }
+.sec-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:.65rem; font-weight:700; letter-spacing:4px;
+  text-transform:uppercase; color:var(--amber-text);
+  margin-bottom:.75rem;
+}
+.sec-eyebrow-line { width:20px; height:1px; background:var(--amber); }
+.sec-title {
+  font-family:'Fraunces', serif; font-weight:900;
+  font-size:clamp(1.8rem,3.5vw,3rem); line-height:1;
+  letter-spacing:-1px; color:var(--text);
+}
+.sec-title .it { font-style:italic; color:var(--amber); }
+.sec-sub { margin-top:.65rem; font-size:.9rem; color:var(--text-3); font-weight:400; }
+.sec-header-row { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem; }
+
+/* ═══════════════════════════════════
+   CUISINE CARDS (9)
+═══════════════════════════════════ */
+.cuisines-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem;
+}
+.cuisine-card {
+  border-radius:var(--radius-lg); overflow:hidden;
+  background:var(--card); border:1px solid var(--border);
+  box-shadow:var(--shadow-sm); transition:transform .35s cubic-bezier(.34,1.2,.64,1),box-shadow .35s cubic-bezier(.34,1.2,.64,1);
+  cursor:pointer; position:relative;
+}
+.cuisine-card:hover {
+  transform:translateY(-5px) scale(1.01);
+  box-shadow:var(--shadow-xl);
+  border-color:var(--border-2);
+}
+.cc-img-wrap {
+  height:150px; overflow:hidden; position:relative;
+}
+.cc-img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .5s ease;
+}
+.cuisine-card:hover .cc-img { transform:scale(1.07); }
+.cc-img-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(26,21,16,.4) 0%, transparent 55%);
+}
+.cc-body { padding:1rem 1.1rem 1.2rem; }
+.cc-name {
+  font-family:'Fraunces', serif; font-size:1.1rem;
+  font-weight:700; color:var(--text); margin-bottom:.25rem;
+  letter-spacing:-.3px;
+}
+.cc-desc { font-size:.775rem; color:var(--text-3); line-height:1.55; font-weight:400; }
+.cc-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:.75rem;
+}
+.cc-count { font-size:.7rem; color:var(--text-3); font-weight:500; }
+.cc-arrow {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--surface); display:flex; align-items:center; justify-content:center;
+  font-size:.75rem; color:var(--amber); transition:background .25s,transform .25s,box-shadow .25s;
+}
+.cuisine-card:hover .cc-arrow { background:var(--amber); color:#fff; }
+
+/* ═══════════════════════════════════
+   FEATURED DISHES (4)
+═══════════════════════════════════ */
+.featured-section { margin-top:4rem; }
+.featured-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem;
+}
+.dish-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius-lg); overflow:hidden;
+  box-shadow:var(--shadow-sm); transition:transform .35s cubic-bezier(.34,1.2,.64,1),box-shadow .35s cubic-bezier(.34,1.2,.64,1);
+  display:flex;
+}
+.dish-card:hover {
+  box-shadow:var(--shadow-lg); transform:translateY(-3px);
+  border-color:var(--border-2);
+}
+.dish-img-wrap { width:130px; flex-shrink:0; overflow:hidden; position:relative; }
+.dish-img { width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
+.dish-card:hover .dish-img { transform:scale(1.07); }
+.dish-rank-badge {
+  position:absolute; top:8px; left:8px;
+  width:24px; height:24px; background:var(--amber); color:#fff;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:.65rem; font-weight:800; font-family:'Fraunces',serif;
+}
+.dish-body { padding:1.25rem 1.25rem 1.25rem 1.15rem; flex:1; min-width:0; }
+.dish-header { display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; }
+.dish-name {
+  font-family:'Fraunces', serif; font-size:1.05rem;
+  font-weight:700; color:var(--text); letter-spacing:-.3px; line-height:1.15;
+}
+.dish-price {
+  font-family:'Fraunces', serif; font-size:1.1rem;
+  font-weight:700; color:var(--amber); white-space:nowrap; line-height:1;
+}
+.dish-desc { font-size:.775rem; color:var(--text-3); line-height:1.55; margin-top:.35rem; }
+.dish-tags { display:flex; gap:.35rem; flex-wrap:wrap; margin-top:.65rem; }
+.tag {
+  font-size:.62rem; font-weight:700; padding:.2rem .55rem;
+  border-radius:100px; letter-spacing:.5px; text-transform:uppercase;
+}
+.tag-pop { background:var(--amber-xl); color:var(--amber-text); }
+.tag-hot { background:var(--red-bg); color:var(--red); }
+.tag-new { background:#EDF4FF; color:var(--blue); }
+.tag-veg { background:var(--green-bg); color:var(--green); }
+.dish-add {
+  display:inline-flex; align-items:center; gap:5px;
+  margin-top:.85rem; font-size:.75rem; font-weight:600;
+  color:var(--amber); transition:gap .2s;
+}
+.dish-card:hover .dish-add { gap:8px; }
+
+/* ═══════════════════════════════════
+   FULL MENU SECTION
+═══════════════════════════════════ */
+.full-menu-section { margin-top:3rem; }
+.menu-chapter {
+  margin-bottom:.85rem;
+  overflow:hidden;
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm);
+  transition:border-color .25s, box-shadow .25s, background .25s;
+}
+.menu-chapter.active-chapter {
+  background:rgba(255,255,255,.94);
+  border-color:rgba(201,138,42,.32);
+  box-shadow:0 16px 38px rgba(26,21,16,.08);
+}
+.chapter-header {
+  display:flex; align-items:center; gap:.85rem;
+  padding:1rem 1.1rem;
+  border-bottom:1px solid transparent;
+  margin-bottom:0;
+  cursor:pointer;
+  transition:background .2s, border-color .2s;
+}
+.chapter-header:hover { background:rgba(251,242,224,.42); }
+.menu-chapter.active-chapter .chapter-header { border-bottom-color:var(--border); }
+.chapter-header::after {
+  content:'+';
+  width:30px; height:30px; margin-left:.25rem;
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--border);
+  border-radius:50%;
+  color:var(--amber);
+  background:var(--surface);
+  font-size:1.05rem;
+  transition:transform .25s, background .25s, color .25s, border-color .25s;
+}
+.menu-chapter.active-chapter .chapter-header::after {
+  content:'-';
+  background:var(--amber);
+  color:#fff;
+  border-color:var(--amber);
+}
+.chapter-icon {
+  width:42px; height:42px; border-radius:50%;
+  overflow:hidden; flex-shrink:0;
+  background:var(--surface-2);
+  border:1px solid rgba(255,255,255,.9);
+  box-shadow:0 8px 18px rgba(26,21,16,.12);
+}
+.chapter-icon img { width:100%; height:100%; object-fit:cover; display:block; }
+.chapter-title {
+  font-family:'Fraunces', serif; font-size:1.35rem;
+  font-weight:700; color:var(--text); letter-spacing:-.3px;
+}
+.chapter-badge {
+  margin-left:auto; font-size:.65rem; font-weight:700;
+  color:var(--text-3); background:var(--surface);
+  padding:.25rem .65rem; border-radius:100px; letter-spacing:.5px;
+}
+.menu-items-grid {
+  display:none;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.65rem;
+  padding:1rem;
+}
+.menu-chapter.active-chapter .menu-items-grid {
+  display:grid;
+}
+.mi {
+  display:flex; flex-direction:row; align-items:center;
+  min-height:82px; overflow:hidden;
+  padding:.65rem; background:var(--card);
+  border:1px solid var(--border); border-radius:var(--radius-md);
+  box-shadow:var(--shadow-sm);
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+}
+.mi:hover {
+  transform:translateY(-2px);
+  border-color:rgba(201,138,42,.45);
+  box-shadow:var(--shadow-md);
+}
+.mi-img-wrap {
+  position:relative;
+  width:62px; height:62px; flex:0 0 62px;
+  border-radius:12px;
+  overflow:hidden; background:var(--surface);
+  border:1px solid var(--border);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);
+}
+.mi-img-wrap::after {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(26,21,16,.12));
+  opacity:.55;
+  pointer-events:none;
+}
+.mi-img {
+  width:100%; height:100%; object-fit:cover;
+  filter:saturate(1.02) contrast(1.02);
+  transition:transform .45s cubic-bezier(.22,1,.36,1), filter .45s ease, opacity .35s ease;
+}
+.mi:hover .mi-img {
+  transform:scale(1.08);
+  filter:saturate(1.1) contrast(1.05);
+}
+.mi-info { flex:1; min-width:0; padding:0; }
+.mi-name { font-size:.96rem; font-weight:700; color:var(--text); line-height:1.25; }
+.mi-desc { font-size:.76rem; color:var(--text-3); margin-top:.2rem; line-height:1.35; }
+.mi-tags { display:flex; gap:.3rem; margin-top:.35rem; flex-wrap:wrap; }
+.mi-right {
+  display:flex; flex-direction:column; align-items:flex-end; justify-content:center;
+  gap:.45rem; flex-shrink:0;
+  padding:0;
+}
+.mi-price { font-family:'Fraunces',serif; font-size:1rem; font-weight:800; color:var(--amber); white-space:nowrap; }
+.mi-btn {
+  width:34px; height:34px; border-radius:50%;
+  background:var(--surface); color:var(--amber);
+  font-size:1.2rem; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--border); transition:background .2s,border-color .2s,color .2s,box-shadow .2s;
+}
+.mi-btn:hover { background:var(--amber); color:#fff; border-color:var(--amber); }
+
+/* ═══════════════════════════════════
+   REVIEWS SECTION
+═══════════════════════════════════ */
+.reviews-section {
+  background:var(--white); border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border); padding:5rem 0;
+}
+.reviews-inner { max-width:1360px; margin:0 auto; padding:0 40px; }
+.reviews-top {
+  display:flex; justify-content:space-between;
+  align-items:flex-end; margin-bottom:3rem; flex-wrap:wrap; gap:2rem;
+}
+.overall-rating { display:flex; align-items:center; gap:1.5rem; }
+.rating-number {
+  font-family:'Fraunces', serif; font-size:5rem;
+  font-weight:900; line-height:1; color:var(--text); letter-spacing:-3px;
+}
+.rating-details {}
+.rating-stars-row { display:flex; gap:3px; }
+.rstar { color:#F5A623; font-size:1.25rem; }
+.rating-count { font-size:.8rem; color:var(--text-3); margin-top:.3rem; }
+.rating-platform { font-size:.7rem; color:var(--amber-text); font-weight:600; letter-spacing:1px; margin-top:.2rem; }
+.rating-bars { display:flex; flex-direction:column; gap:.35rem; }
+.rbar-row { display:flex; align-items:center; gap:.6rem; font-size:.72rem; color:var(--text-3); }
+.rbar-track { width:80px; height:4px; background:var(--surface-2); border-radius:2px; overflow:hidden; }
+.rbar-fill { height:100%; background:var(--amber); border-radius:2px; }
+
+.reviews-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+.review-card {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:1.5rem;
+  position:relative; transition:background .3s,border-color .3s,transform .3s,box-shadow .3s;
+}
+.review-card:hover { box-shadow:var(--shadow-md); border-color:var(--border-2); }
+.review-quote {
+  position:absolute; top:1rem; left:1.25rem;
+  font-family:'Fraunces', serif; font-size:4rem;
+  font-weight:900; color:var(--amber); opacity:.08; line-height:1;
+}
+.review-head { display:flex; align-items:center; gap:.75rem; margin-bottom:1rem; }
+.rev-avatar {
+  width:40px; height:40px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:.9rem; flex-shrink:0;
+}
+.rav-a { background:#FEF0E6; color:#C97030; }
+.rav-b { background:#EEF6F1; color:#3B6E4B; }
+.rav-c { background:#EDF4FF; color:#2E5C8A; }
+.rav-d { background:#F9EEF8; color:#7C3A85; }
+.rev-name { font-size:.875rem; font-weight:600; color:var(--text); }
+.rev-info { font-size:.7rem; color:var(--text-3); margin-top:.1rem; }
+.rev-stars { display:flex; gap:2px; margin-left:auto; }
+.rev-star { color:#F5A623; font-size:.8rem; }
+.rev-text { font-size:.85rem; color:var(--text-2); line-height:1.7; font-weight:400; }
+.rev-dish { margin-top:.85rem; font-size:.72rem; color:var(--amber-text); font-weight:600; letter-spacing:.5px; }
+.rev-platform { margin-top:.3rem; font-size:.68rem; color:var(--text-3); }
+
+/* ═══════════════════════════════════
+   DELIVERY SECTION
+═══════════════════════════════════ */
+.delivery-section { padding:5rem 0; background:var(--surface); }
+.delivery-inner { max-width:1360px; margin:0 auto; padding:0 40px; }
+.delivery-layout { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+.delivery-text {}
+.delivery-text .sec-title { font-size:clamp(2rem,3.5vw,3.2rem); }
+.delivery-text p { margin-top:1rem; font-size:.95rem; color:var(--text-2); line-height:1.8; }
+.delivery-channels { display:flex; flex-direction:column; gap:.85rem; margin-top:2.5rem; }
+.ch-btn {
+  display:flex; align-items:center; gap:1rem;
+  padding:1.1rem 1.5rem; border-radius:var(--radius-md);
+  border:1px solid var(--border); background:var(--white);
+  box-shadow:var(--shadow-sm); transition:background .3s,border-color .3s,transform .3s,box-shadow .3s; font-size:.9rem;
+}
+.ch-btn:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:var(--border-2); }
+.ch-logo {
+  width:42px; height:42px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem; flex-shrink:0;
+}
+.ch-logo svg {
+  width:21px; height:21px;
+  fill:currentColor;
+}
+.ch-mark {
+  color:var(--text);
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.2px;
+  text-transform:lowercase;
+}
+.ch-talabat-bg { background:#FFF0EB; }
+.ch-deliveroo-bg { background:#EBF8F4; }
+.ch-wa-bg { background:#EEF7F0; }
+.ch-text {}
+.ch-text strong { display:block; font-weight:700; color:var(--text); font-size:.9rem; }
+.ch-text span { font-size:.75rem; color:var(--text-3); }
+.ch-arrow { margin-left:auto; color:var(--text-3); font-size:1rem; transition:transform .2s; }
+.ch-btn:hover .ch-arrow { transform:translateX(3px); color:var(--amber); }
+
+.delivery-contact {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:var(--radius-xl); padding:2.5rem; box-shadow:var(--shadow-md);
+}
+.dc-title {
+  font-family:'Fraunces', serif; font-size:1.5rem;
+  font-weight:700; color:var(--text); margin-bottom:2rem; letter-spacing:-.5px;
+}
+.dc-items { display:flex; flex-direction:column; gap:1.25rem; }
+.dc-item { display:flex; align-items:flex-start; gap:1rem; }
+.dc-icon {
+  width:44px; height:44px; border-radius:var(--radius-sm);
+  background:var(--surface); display:flex; align-items:center;
+  justify-content:center; font-size:1.2rem; flex-shrink:0;
+  border:1px solid var(--border);
+  color:var(--amber);
+}
+.dc-icon svg {
+  width:20px; height:20px;
+  fill:currentColor;
+}
+.dc-body {}
+.dc-label { font-size:.65rem; font-weight:700; color:var(--text-3); letter-spacing:2px; text-transform:uppercase; margin-bottom:.2rem; }
+.dc-value { font-size:.925rem; color:var(--text); font-weight:500; line-height:1.5; }
+.dc-value a { color:var(--text); transition:color .2s; }
+.dc-value a:hover { color:var(--amber); }
+.dc-map-link {
+  display:inline-flex;
+  width:fit-content;
+  margin-top:.55rem;
+  padding:.32rem .72rem;
+  border:1px solid rgba(201,138,42,.28);
+  border-radius:999px;
+  background:var(--amber-xl);
+  color:var(--amber-text) !important;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.9px;
+  text-transform:uppercase;
+  transition:background .2s,color .2s,border-color .2s,transform .2s;
+}
+.dc-map-link:hover {
+  background:var(--amber);
+  color:#fff !important;
+  border-color:var(--amber);
+  transform:translateY(-1px);
+}
+.dc-divider { height:1px; background:var(--border); margin:.25rem 0; }
+.dc-hours { margin-top:1.5rem; }
+.dc-hours-title { font-size:.65rem; font-weight:700; color:var(--text-3); letter-spacing:2px; text-transform:uppercase; margin-bottom:.85rem; }
+.dc-hour-row { display:flex; justify-content:space-between; align-items:center; padding:.4rem 0; border-bottom:1px solid var(--border); font-size:.825rem; }
+.dc-hour-row:last-child { border:none; }
+.dc-hour-row span:first-child { color:var(--text-2); }
+.dc-hour-row span:last-child { color:var(--amber); font-weight:600; }
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+footer {
+  background:var(--text); color:rgba(240,235,228,.8);
+  padding:4rem 0 2rem;
+}
+.foot-inner { max-width:1360px; margin:0 auto; padding:0 40px; }
+.foot-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:4rem; margin-bottom:3.5rem; }
+.foot-brand {}
+.foot-logo-row { display:flex; align-items:center; gap:10px; margin-bottom:1rem; }
+.foot-logo-box {
+  width:34px; height:34px; background:var(--amber); border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Fraunces',serif; font-size:.9rem; font-weight:900; color:#fff;
+}
+.foot-brand-name { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700; color:rgba(240,235,228,.95); }
+.foot-desc { font-size:.825rem; line-height:1.8; opacity:.65; max-width:280px; }
+.foot-socials { display:flex; gap:.65rem; margin-top:1.5rem; flex-wrap:wrap; }
+.fsoc {
+  width:34px; height:34px; border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1);
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(240,235,228,.58); font-size:.72rem; font-weight:700;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  transition:background .2s,border-color .2s,color .2s,box-shadow .2s,transform .2s;
+}
+.fsoc svg {
+  width:17px; height:17px;
+  fill:currentColor;
+}
+.fsoc-word {
+  width:auto;
+  min-width:34px;
+  padding:0 .55rem;
+  letter-spacing:.4px;
+  text-transform:lowercase;
+}
+.fsoc:hover {
+  background:rgba(201,138,42,.13);
+  border-color:rgba(221,168,76,.65);
+  color:var(--amber-l);
+  transform:translateY(-2px);
+}
+.foot-col h4 {
+  font-size:.62rem; font-weight:700; letter-spacing:3px;
+  text-transform:uppercase; color:rgba(240,235,228,.4);
+  margin-bottom:1.25rem;
+}
+.foot-col ul { list-style:none; display:flex; flex-direction:column; gap:.55rem; }
+.foot-col a {
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-size:.8rem; opacity:.65; transition:opacity .2s,color .2s;
+}
+.foot-col a:hover { opacity:1; color:var(--amber-l); }
+.foot-link-icon {
+  width:22px; height:22px; flex:0 0 22px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid rgba(240,235,228,.12);
+  border-radius:7px;
+  color:rgba(240,235,228,.56);
+  font-size:.55rem; font-weight:800;
+  letter-spacing:.2px;
+  text-transform:lowercase;
+  transition:border-color .2s,color .2s,background .2s;
+}
+.foot-link-icon svg {
+  width:13px; height:13px;
+  fill:currentColor;
+}
+.foot-col a:hover .foot-link-icon {
+  color:var(--amber-l);
+  border-color:rgba(221,168,76,.45);
+  background:rgba(201,138,42,.1);
+}
+.foot-bottom {
+  border-top:1px solid rgba(255,255,255,.08);
+  padding-top:1.75rem; display:flex;
+  justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:1rem;
+}
+.foot-bottom p { font-size:.75rem; opacity:.4; }
+.foot-bottom-copy {
+  display:flex; flex-direction:column; gap:.5rem;
+}
+.foot-credit {
+  width:fit-content;
+  color:rgba(240,235,228,.48);
+  font-size:.68rem;
+  font-weight:700;
+  letter-spacing:2.4px;
+  text-transform:uppercase;
+  transition:color .25s, letter-spacing .25s;
+}
+.foot-credit:hover {
+  color:var(--amber-l);
+  letter-spacing:2.8px;
+}
+.foot-rating { display:flex; align-items:center; gap:.5rem; font-size:.75rem; opacity:.5; }
+
+/* ═══════════════════════════════════
+   TOAST
+═══════════════════════════════════ */
+.toast {
+  position:fixed; bottom:1.75rem; left:50%;
+  transform:translateX(-50%) translateY(100px);
+  background:var(--text); color:var(--bg); padding:.7rem 1.25rem;
+  border-radius:100px; font-size:.825rem; font-weight:500;
+  z-index:9999; transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  display:flex; align-items:center; gap:.5rem; white-space:nowrap;
+  box-shadow:var(--shadow-xl);
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast-icon { font-size:1rem; }
+
+/* ═══════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════ */
+@keyframes fadeSlideUp {
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.reveal {
+  opacity:0; transform:translateY(28px);
+  transition:opacity .7s ease, transform .7s ease;
+}
+.reveal.vis { opacity:1; transform:translateY(0); }
+.d1 { transition-delay:.08s; }
+.d2 { transition-delay:.16s; }
+.d3 { transition-delay:.24s; }
+.d4 { transition-delay:.32s; }
+.d5 { transition-delay:.40s; }
+.d6 { transition-delay:.48s; }
+
+/* ═══════════════════════════════════
+   MOBILE RESPONSIVE
+═══════════════════════════════════ */
+@media (max-width:1100px) {
+  .main-layout { grid-template-columns:1fr; padding:0 24px; }
+  .sidebar { position:static; max-height:none; padding:1.5rem 0 0; overflow:visible; }
+  .sidebar-nav { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .sidebar-title { width:100%; }
+  .sidebar-nav-item { margin:0; }
+  .sidebar-nav-btn { padding:.5rem .85rem; border:1px solid var(--border); border-radius:100px; font-size:.8rem; }
+  .sidebar-nav-btn.active { border-color:var(--amber); }
+  .snb-count { display:none; }
+  .sidebar-divider, .sidebar-order-block { display:none; }
+  .content { padding:1.5rem 0; }
+  .hero { display:block; }
+  .hero::before {
+    background:
+      linear-gradient(180deg,
+        rgba(255,255,252,.82) 0%,
+        rgba(255,255,252,.66) 48%,
+        rgba(255,255,252,.18) 78%,
+        rgba(255,255,252,.42) 100%);
+  }
+  .hero-right { inset:var(--nav-h) 0 0; height:auto; min-height:0; }
+  .hero-left { justify-content:flex-start; padding:3rem 5% 2rem; }
+  .cuisine-cards-section, .featured-section { padding:0; }
+}
+@media (max-width:900px) {
+  .cuisines-grid { grid-template-columns:repeat(3,1fr); }
+  .featured-grid { grid-template-columns:1fr; }
+  .reviews-grid { grid-template-columns:1fr 1fr; }
+  .delivery-layout { grid-template-columns:1fr; gap:2.5rem; }
+  .foot-grid { grid-template-columns:1fr 1fr; gap:2.5rem; }
+}
+@media (max-width:640px) {
+  .container, .reviews-inner, .delivery-inner, .foot-inner { padding:0 20px; }
+  .nav-inner { padding:0; gap:.45rem; }
+  .nav-links { display:none; }
+  .nav-hamburger { display:flex; }
+  .nav-lang { display:inline-flex; padding:.44rem .55rem; gap:.28rem; font-size:.66rem; }
+  .nav-lang-icon { display:none; }
+  .nav-lang-divider { height:12px; }
+  .nav-wa { display:none; }
+  .nav-order { padding:.58rem .95rem; font-size:.8rem; }
+  .nav-logo { width:38px; height:38px; border-radius:10px; }
+  .nav-name strong { font-size:.92rem; }
+  .nav-name em { font-size:.55rem; letter-spacing:1.8px; }
+  .hero::before {
+    background:
+      linear-gradient(180deg,
+        rgba(255,255,252,.9) 0%,
+        rgba(255,255,252,.8) 54%,
+        rgba(255,255,252,.38) 78%,
+        rgba(255,255,252,.58) 100%);
+  }
+  .hero-left, .hero-right { min-width:0; }
+  .hero-left { min-height:calc(100svh - var(--nav-h)); padding:2rem 20px; }
+  .hero-float-card { display:none; }
+  .hero-stats { gap:1.25rem; }
+  .stat-val { font-size:1.75rem; }
+  .cuisines-grid { grid-template-columns:1fr 1fr; }
+  .menu-items-grid { grid-template-columns:1fr; }
+  .mi-img-wrap { aspect-ratio:16/10; }
+  .reviews-top { flex-direction:column; }
+  .reviews-grid { grid-template-columns:1fr; }
+  .rating-bars { display:none; }
+  .foot-grid { grid-template-columns:1fr; }
+  .hero-float-card { left:1rem; bottom:1.5rem; }
+  .main-layout { padding:0 20px; }
+}
+
+/* ═══════════════════════════════════
+   PERFORMANCE — patch v3.2
+═══════════════════════════════════ */
+
+/* GPU layer for continuously animating element */
+.strip-track { will-change:transform; }
+
+/* Contain layout for large off-screen sections */
+.reviews-section,
+.delivery-section,
+footer {
+  content-visibility:auto;
+  contain-intrinsic-size:0 600px;
+}
+
+/* Stable image containers — prevent layout shift */
+.hero-right { aspect-ratio:auto; }
+.cc-img-wrap { position:relative; overflow:hidden; }
+.cc-img-wrap img { position:absolute; inset:0; width:100%; height:100%; }
+.dish-img-wrap img { width:100%; height:100%; object-fit:cover; }
+
+/* Smooth image reveal without JS */
+img { opacity:1; }
+img[loading="lazy"] { opacity:0; transition:opacity .35s ease; }
+img[loading="lazy"].loaded { opacity:1; }
+.mi-img[loading="lazy"] {
+  transition:transform .45s cubic-bezier(.22,1,.36,1), filter .45s ease, opacity .35s ease;
+}
+
+/* Strip images: no transform on hover to reduce repaints */
+.strip-img { will-change:auto; }
+
+/* Reduce animation duration on small devices for speed feel */
+@media (max-width:640px) {
+  .reveal { transition:opacity .5s ease, transform .5s ease; }
+  @keyframes fadeSlideUp {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+}
+
+/* Respect user preference — zero motion for accessibility + perf */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+  .strip-track { animation:none; }
+  .reveal { opacity:1; transform:none; transition:none; }
+  .hero-img { animation:none; }
+}
+
+/* ═════════ RTL LANGUAGE POLISH ═════════ */
+html[dir="rtl"] body { direction:rtl; }
+html[dir="rtl"] .nav-name,
+html[dir="rtl"] .hero-left,
+html[dir="rtl"] .sec-header,
+html[dir="rtl"] .delivery-text,
+html[dir="rtl"] .delivery-contact,
+html[dir="rtl"] .foot-brand,
+html[dir="rtl"] .foot-col,
+html[dir="rtl"] .om-box { text-align:right; }
+html[dir="rtl"] .nav-inner,
+html[dir="rtl"] .hero-actions,
+html[dir="rtl"] .ch-btn,
+html[dir="rtl"] .dc-item,
+html[dir="rtl"] .chapter-header,
+html[dir="rtl"] .om-header,
+html[dir="rtl"] .om-cart-header,
+html[dir="rtl"] .om-cart-footer,
+html[dir="rtl"] .om-cart-item { direction:rtl; }
+html[dir="rtl"] .hero-badge,
+html[dir="rtl"] .hero-cuisines,
+html[dir="rtl"] .dish-tags,
+html[dir="rtl"] .mi-tags,
+html[dir="rtl"] .foot-socials { justify-content:flex-start; }
+html[dir="rtl"] .chapter-badge,
+html[dir="rtl"] .ch-arrow { margin-left:0; margin-right:auto; }
+html[dir="rtl"] .mi-right { align-items:flex-start; }
+html[dir="rtl"] .om-cart-item-remove { margin-right:.35rem; }
+html[dir="rtl"] .sec-sub { text-align:right !important; }
+html[dir="rtl"] .foot-credit { letter-spacing:1.2px; }
+html[dir="rtl"] .foot-credit:hover { letter-spacing:1.5px; }
+html[dir="rtl"] .content {
+  padding:3rem 2.5rem 3rem 0;
+}
+html[dir="rtl"] .sec-title {
+  letter-spacing:0;
+}
+html[dir="rtl"] .sec-header-row {
+  flex-direction:row-reverse;
+}
+html[dir="rtl"] .sec-header-row .sec-sub {
+  text-align:left !important;
+}
+html[dir="rtl"] .sidebar-nav-btn {
+  text-align:right;
+}
+html[dir="rtl"] .snb-count {
+  margin-left:0;
+  margin-right:auto;
+}
+html[dir="rtl"] .dish-header,
+html[dir="rtl"] .mi {
+  direction:rtl;
+}
+html[dir="rtl"] .dish-price,
+html[dir="rtl"] .mi-price,
+html[dir="rtl"] .dish-add,
+html[dir="rtl"] .mi-btn {
+  white-space:nowrap;
+}
+html[dir="rtl"] .delivery-text {
+  max-width:720px;
+}
+html[dir="rtl"] .delivery-text p {
+  direction:rtl;
+  text-align:center;
+}
+
+@media (max-width:1100px) {
+  html[dir="rtl"] .content {
+    padding:1.5rem 0;
+  }
+  html[dir="rtl"] .sec-header-row,
+  html[dir="rtl"] .sec-header-row .sec-sub {
+    text-align:right !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ TOAST ════════════ -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  Added — order via WhatsApp to confirm!
+</div>
+
+<!-- ════════════════════════════════
+     NAVBAR
+════════════════════════════════ -->
+<nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#hero">
+        <div class="nav-logo">CG</div>
+        <div class="nav-name">
+          <strong>Cool Grand</strong>
+          <em>RESTAURANT · DUBAI</em>
+        </div>
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="#cuisines">Cuisines</a></li>
+        <li><a href="#featured">Dishes</a></li>
+        <li><a href="#full-menu">Menu</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#order">Order</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a class="nav-lang" href="#" aria-label="Switch language">
+          <span class="nav-lang-icon">文</span>
+          <span>EN</span>
+          <span class="nav-lang-divider"></span>
+          <span>العربية</span>
+        </a>
+        <a class="nav-wa" href="https://wa.me/971551019060" target="_blank" rel="noopener">
+          WhatsApp
+        </a>
+        <a class="btn nav-order btn-primary" href="#order">Order Now</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════
+     HERO
+════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-left">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Open Now · Damac Hills 2, Dubai
+    </div>
+    <h1 class="hero-h1">
+      Nine World<br>
+      <span class="italic">Cuisines,</span><br>
+      One Place
+    </h1>
+    <p class="hero-tagline">
+      From sizzling Indian curries to authentic Arabic grills, 
+      Cool Grand brings the world's finest flavors to your table — or your doorstep.
+    </p>
+    <div class="hero-cuisines">
+      <span class="hero-cuisine-tag">Indian</span>
+      <span class="hero-cuisine-tag">Grills</span>
+      <span class="hero-cuisine-tag">Shawarma</span>
+      <span class="hero-cuisine-tag">Indo-Chinese</span>
+      <span class="hero-cuisine-tag">Biryani</span>
+      <span class="hero-cuisine-tag">Arabic</span>
+      <span class="hero-cuisine-tag">Pasta</span>
+      <span class="hero-cuisine-tag">Burgers</span>
+      <span class="hero-cuisine-tag">Thai</span>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#full-menu">View Full Menu</a>
+      <a class="btn btn-secondary" href="https://wa.me/971551019060" target="_blank">Order via WhatsApp</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="stat-val">
+          <span class="counter" data-target="247" data-suffix="">0</span>
+        </div>
+        <div class="stat-label">Orders Today</div>
+        <div class="stat-live"><span class="stat-live-dot"></span> Live</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <div class="stat-val">
+          <span class="counter" data-target="28" data-suffix="">0</span>
+          <span class="unit">min</span>
+        </div>
+        <div class="stat-label">Avg Delivery</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <div class="stat-val">
+          <span class="counter" data-target="47" data-suffix="" data-decimal="true">0</span>
+        </div>
+        <div class="stat-label">Customer Rating</div>
+        <div class="stat-live" style="color:#F5A623">★ Talabat</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-stat">
+        <div class="stat-val">
+          <span class="counter" data-target="9" data-suffix="">0</span>
+        </div>
+        <div class="stat-label">Cuisines</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img
+      class="hero-img"
+      src="assets/images/cool-grand-hero-premium.png"
+      alt="Cool Grand Restaurant premium dining counter in Dubai"
+      loading="eager"
+      fetchpriority="high"
+      decoding="sync"
+      width="1870" height="841"
+    >
+    <div class="hero-img-overlay"></div>
+    <div class="hero-float-card">
+      <div class="float-card-icon">4.7</div>
+      <div class="float-card-text">
+        <strong>500+ Happy Reviews</strong>
+        <span>Verified on Talabat & Deliveroo</span>
+        <div class="float-card-stars">Talabat · Deliveroo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     FOOD MARQUEE STRIP
+════════════════════════════════ -->
+<div class="strip-wrap" aria-hidden="true">
+  <div class="strip-track" id="stripTrack">
+    <!-- Set 1 -->
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=104&h=104&q=55&auto=format&fit=crop" alt="Butter Chicken" width="52" height="52">
+      <span class="strip-name">Butter Chicken</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="assets/images/menu/food-79.webp" alt="Shawarma" width="52" height="52">
+      <span class="strip-name">Chicken Shawarma</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=104&h=104&q=55&auto=format&fit=crop" alt="Noodles" width="52" height="52">
+      <span class="strip-name">Hakka Noodles</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="assets/images/menu/food-65.webp" alt="Biryani" width="52" height="52">
+      <span class="strip-name">Chicken Biryani</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1596797038530-2c107229654b?w=104&h=104&q=55&auto=format&fit=crop" alt="Naan" width="52" height="52">
+      <span class="strip-name">Butter Naan</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=104&h=104&q=55&auto=format&fit=crop" alt="Grills" width="52" height="52">
+      <span class="strip-name">Mixed Grill Platter</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1559314809-0d155014e29e?w=104&h=104&q=55&auto=format&fit=crop" alt="Pad Thai" width="52" height="52">
+      <span class="strip-name">Pad Thai</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=104&h=104&q=55&auto=format&fit=crop" alt="Pasta" width="52" height="52">
+      <span class="strip-name">Pasta Alfredo</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1586816001966-79b736744398?w=104&h=104&q=55&auto=format&fit=crop" alt="Burger" width="52" height="52">
+      <span class="strip-name">Classic Burger</span>
+    </div>
+    <span class="strip-sep"></span>
+    <!-- Set 2 (duplicate for seamless loop) -->
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=104&h=104&q=55&auto=format&fit=crop" alt="Butter Chicken" width="52" height="52">
+      <span class="strip-name">Butter Chicken</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="assets/images/menu/food-79.webp" alt="Shawarma" width="52" height="52">
+      <span class="strip-name">Chicken Shawarma</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=104&h=104&q=55&auto=format&fit=crop" alt="Noodles" width="52" height="52">
+      <span class="strip-name">Hakka Noodles</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="assets/images/menu/food-65.webp" alt="Biryani" width="52" height="52">
+      <span class="strip-name">Chicken Biryani</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1596797038530-2c107229654b?w=104&h=104&q=55&auto=format&fit=crop" alt="Naan" width="52" height="52">
+      <span class="strip-name">Butter Naan</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=104&h=104&q=55&auto=format&fit=crop" alt="Grills" width="52" height="52">
+      <span class="strip-name">Mixed Grill Platter</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1559314809-0d155014e29e?w=104&h=104&q=55&auto=format&fit=crop" alt="Pad Thai" width="52" height="52">
+      <span class="strip-name">Pad Thai</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=104&h=104&q=55&auto=format&fit=crop" alt="Pasta" width="52" height="52">
+      <span class="strip-name">Pasta Alfredo</span>
+    </div>
+    <span class="strip-sep"></span>
+    <div class="strip-item">
+      <img decoding="async" loading="lazy" class="strip-img" src="https://images.unsplash.com/photo-1586816001966-79b736744398?w=104&h=104&q=55&auto=format&fit=crop" alt="Burger" width="52" height="52">
+      <span class="strip-name">Classic Burger</span>
+    </div>
+    <span class="strip-sep"></span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     MAIN LAYOUT — SIDEBAR + CONTENT
+════════════════════════════════ -->
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar" aria-label="Cuisine navigation">
+    <span class="sidebar-title">Explore Cuisines</span>
+    <ul class="sidebar-nav" role="list">
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn active" onclick="sideNav('cuisines',this)" aria-current="true">
+          <span class="snb-icon"><img src="assets/images/google-cool-grand-photo-01.jpg" alt="" loading="lazy"></span> All Cuisines
+          <span class="snb-count">9</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-indian',this)">
+          <span class="snb-icon"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=72&h=72&q=70&auto=format&fit=crop" alt="" loading="lazy"></span> Indian
+          <span class="snb-count">6</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-grills',this)">
+          <span class="snb-icon"><img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=72&h=72&q=70&auto=format&fit=crop" alt="" loading="lazy"></span> Grills
+          <span class="snb-count">4</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-shawarma',this)">
+          <span class="snb-icon"><img src="assets/images/menu/food-79.webp" alt="" loading="lazy"></span> Shawarma
+          <span class="snb-count">4</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-indochinese',this)">
+          <span class="snb-icon"><img src="https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=72&h=72&q=70&auto=format&fit=crop" alt="" loading="lazy"></span> Indo-Chinese
+          <span class="snb-count">4</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-biryani',this)">
+          <span class="snb-icon"><img src="assets/images/menu/food-65.webp" alt="" loading="lazy"></span> Biryani
+          <span class="snb-count">4</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-arabic',this)">
+          <span class="snb-icon"><img src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=72&h=72&q=70&auto=format&fit=crop" alt="" loading="lazy"></span> Arabic
+          <span class="snb-count">4</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-pasta',this)">
+          <span class="snb-icon"><img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=72&h=72&q=70&auto=format&fit=crop" alt="" loading="lazy"></span> Pasta
+          <span class="snb-count">2</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-burgers',this)">
+          <span class="snb-icon"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=72&h=72&q=70&auto=format&fit=crop" alt="" loading="lazy"></span> Burgers
+          <span class="snb-count">2</span>
+        </button>
+      </li>
+      <li class="sidebar-nav-item">
+        <button class="sidebar-nav-btn" onclick="sideNav('c-thai',this)">
+          <span class="snb-icon"><img src="https://images.unsplash.com/photo-1559314809-0d155014e29e?w=72&h=72&q=70&auto=format&fit=crop" alt="" loading="lazy"></span> Thai
+          <span class="snb-count">2</span>
+        </button>
+      </li>
+    </ul>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-order-block">
+      <p>QUICK ORDER</p>
+      <a class="sidebar-wa-btn" href="https://wa.me/971551019060" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Order on WhatsApp
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- ── CUISINE CARDS (9) ── -->
+    <section id="cuisines" aria-labelledby="cuisines-title">
+      <div class="sec-header">
+        <div class="sec-eyebrow reveal"><span class="sec-eyebrow-line"></span> Our Cuisines</div>
+        <h2 class="sec-title reveal d1" id="cuisines-title">Nine Kitchens, <span class="it">One Roof</span></h2>
+        <p class="sec-sub reveal d2">Click any cuisine to jump straight to its menu</p>
+      </div>
+      <div class="cuisines-grid">
+
+        <div class="cuisine-card reveal" onclick="sideNav('c-indian', document.querySelector('[onclick*=c-indian]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=480&h=200&q=65&auto=format&fit=crop" alt="Indian cuisine" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Indian</div>
+            <div class="cc-desc">Rich curries, tandoor breads & aromatic spices from Mumbai to Delhi</div>
+            <div class="cc-footer">
+              <span class="cc-count">6 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuisine-card reveal d1" onclick="sideNav('c-grills', document.querySelector('[onclick*=c-grills]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=480&h=200&q=65&auto=format&fit=crop" alt="Grills" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Grills</div>
+            <div class="cc-desc">Charcoal-fired chicken, lamb & fish, juicy and flame-kissed</div>
+            <div class="cc-footer">
+              <span class="cc-count">4 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuisine-card reveal d2" onclick="sideNav('c-shawarma', document.querySelector('[onclick*=c-shawarma]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="assets/images/menu/food-79.webp" alt="Shawarma" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Shawarma</div>
+            <div class="cc-desc">Marinated chicken & lamb wrapped with tahini, pickles & garlic</div>
+            <div class="cc-footer">
+              <span class="cc-count">4 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuisine-card reveal" onclick="sideNav('c-indochinese', document.querySelector('[onclick*=c-indochinese]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=480&h=200&q=65&auto=format&fit=crop" alt="Indo-Chinese" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Indo-Chinese</div>
+            <div class="cc-desc">The bold fusion of Indian spice with Chinese technique — noodles & wok-fried dishes</div>
+            <div class="cc-footer">
+              <span class="cc-count">4 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuisine-card reveal d1" onclick="sideNav('c-biryani', document.querySelector('[onclick*=c-biryani]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="assets/images/menu/food-65.webp" alt="Biryani" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Biryani</div>
+            <div class="cc-desc">Slow-cooked fragrant basmati layered with chicken, lamb or prawns</div>
+            <div class="cc-footer">
+              <span class="cc-count">4 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuisine-card reveal d2" onclick="sideNav('c-arabic', document.querySelector('[onclick*=c-arabic]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=480&h=200&q=65&auto=format&fit=crop" alt="Arabic food" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Arabic</div>
+            <div class="cc-desc">Authentic Levantine & Gulf dishes — mezze, kabsa, freekeh</div>
+            <div class="cc-footer">
+              <span class="cc-count">4 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuisine-card reveal" onclick="sideNav('c-pasta', document.querySelector('[onclick*=c-pasta]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=480&h=200&q=65&auto=format&fit=crop" alt="Pasta" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Pasta</div>
+            <div class="cc-desc">Classic Italian pasta — creamy alfredo, spicy arrabiata</div>
+            <div class="cc-footer">
+              <span class="cc-count">2 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuisine-card reveal d1" onclick="sideNav('c-burgers', document.querySelector('[onclick*=c-burgers]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=480&h=200&q=65&auto=format&fit=crop" alt="Burgers" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Burgers</div>
+            <div class="cc-desc">Crispy chicken or smash beef patties with premium toppings</div>
+            <div class="cc-footer">
+              <span class="cc-count">2 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuisine-card reveal d2" onclick="sideNav('c-thai', document.querySelector('[onclick*=c-thai]'))">
+          <div class="cc-img-wrap">
+            <img decoding="async" class="cc-img" src="https://images.unsplash.com/photo-1559314809-0d155014e29e?w=480&h=200&q=65&auto=format&fit=crop" alt="Thai food" loading="lazy" width="480" height="200">
+            <div class="cc-img-overlay"></div>
+          </div>
+          <div class="cc-body">
+            <div class="cc-name">Thai</div>
+            <div class="cc-desc">Pad Thai, green & red curries bursting with Southeast Asian warmth</div>
+            <div class="cc-footer">
+              <span class="cc-count">2 items</span>
+              <span class="cc-arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── FEATURED DISHES (4) ── -->
+    <section class="featured-section" id="featured" aria-labelledby="featured-title">
+      <div class="sec-header sec-header-row">
+        <div>
+          <div class="sec-eyebrow reveal"><span class="sec-eyebrow-line"></span> Most Popular</div>
+          <h2 class="sec-title reveal d1" id="featured-title">Fan <span class="it">Favourites</span></h2>
+        </div>
+        <p class="sec-sub reveal d2" style="max-width:240px; text-align:right">
+          #1–4 bestsellers on Talabat this week
+        </p>
+      </div>
+      <div class="featured-grid">
+
+        <div class="dish-card reveal">
+          <div class="dish-img-wrap">
+            <img decoding="async" class="dish-img" src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=260&h=200&q=65&auto=format&fit=crop" alt="Butter Chicken" loading="lazy" width="260" height="200">
+            <div class="dish-rank-badge">1</div>
+          </div>
+          <div class="dish-body">
+            <div class="dish-header">
+              <div class="dish-name">Butter Chicken</div>
+              <div class="dish-price">AED 35</div>
+            </div>
+            <div class="dish-desc">Tender chicken in a silky tomato-butter cream sauce with aromatic garam masala</div>
+            <div class="dish-tags">
+              <span class="tag tag-pop">Most Ordered</span>
+              <span class="tag tag-veg" style="background:#F5F0E8;color:#8A6830">Indian</span>
+            </div>
+            <div class="dish-add" onclick="showToast()">Add to order →</div>
+          </div>
+        </div>
+
+        <div class="dish-card reveal d1">
+          <div class="dish-img-wrap">
+            <img decoding="async" class="dish-img" src="assets/images/menu/food-79.webp" alt="Chicken Shawarma" loading="lazy" width="260" height="200">
+            <div class="dish-rank-badge">2</div>
+          </div>
+          <div class="dish-body">
+            <div class="dish-header">
+              <div class="dish-name">Chicken Shawarma</div>
+              <div class="dish-price">AED 18</div>
+            </div>
+            <div class="dish-desc">Marinated rotisserie chicken, fresh veggies, tahini sauce, wrapped in soft bread</div>
+            <div class="dish-tags">
+              <span class="tag tag-pop">Top Seller</span>
+              <span class="tag tag-hot">Spicy Option</span>
+            </div>
+            <div class="dish-add" onclick="showToast()">Add to order →</div>
+          </div>
+        </div>
+
+        <div class="dish-card reveal d2">
+          <div class="dish-img-wrap">
+            <img decoding="async" class="dish-img" src="https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=260&h=200&q=65&auto=format&fit=crop" alt="Hakka Noodles" loading="lazy" width="260" height="200">
+            <div class="dish-rank-badge">3</div>
+          </div>
+          <div class="dish-body">
+            <div class="dish-header">
+              <div class="dish-name">Hakka Noodles</div>
+              <div class="dish-price">AED 28</div>
+            </div>
+            <div class="dish-desc">Wok-tossed noodles with chicken, bell peppers & a savory soy-chili sauce</div>
+            <div class="dish-tags">
+              <span class="tag tag-new">Trending</span>
+              <span class="tag tag-hot">Hot</span>
+            </div>
+            <div class="dish-add" onclick="showToast()">Add to order →</div>
+          </div>
+        </div>
+
+        <div class="dish-card reveal d3">
+          <div class="dish-img-wrap">
+            <img decoding="async" class="dish-img" src="https://images.unsplash.com/photo-1596797038530-2c107229654b?w=260&h=200&q=65&auto=format&fit=crop" alt="Butter Naan" loading="lazy" width="260" height="200">
+            <div class="dish-rank-badge">4</div>
+          </div>
+          <div class="dish-body">
+            <div class="dish-header">
+              <div class="dish-name">Butter Naan</div>
+              <div class="dish-price">AED 8</div>
+            </div>
+            <div class="dish-desc">Freshly baked tandoor bread, glazed with real butter — the perfect side</div>
+            <div class="dish-tags">
+              <span class="tag tag-pop">Always Ordered</span>
+              <span class="tag tag-veg">Vegetarian</span>
+            </div>
+            <div class="dish-add" onclick="showToast()">Add to order →</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── FULL MENU ── -->
+    <section class="full-menu-section" id="full-menu" aria-labelledby="menu-title">
+      <div class="sec-header">
+        <div class="sec-eyebrow reveal"><span class="sec-eyebrow-line"></span> Complete Menu</div>
+        <h2 class="sec-title reveal d1" id="menu-title">Every <span class="it">Dish</span> We Make</h2>
+      </div>
+
+      <!-- INDIAN -->
+      <div class="menu-chapter" id="c-indian">
+        <div class="chapter-header">
+          <span class="chapter-icon">🍛</span>
+          <span class="chapter-title">Indian</span>
+          <span class="chapter-badge">6 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Butter Chicken</div><div class="mi-desc">Chicken in tomato-cream sauce</div><div class="mi-tags"><span class="tag tag-pop">Most Ordered</span></div></div><div class="mi-right"><span class="mi-price">AED 35</span><button class="mi-btn" onclick="showToast()" aria-label="Add Butter Chicken">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Tikka Masala</div><div class="mi-desc">Grilled chicken in masala sauce</div><div class="mi-tags"><span class="tag tag-hot">Hot</span></div></div><div class="mi-right"><span class="mi-price">AED 38</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Dal Makhani</div><div class="mi-desc">Black lentils slow-cooked with butter</div><div class="mi-tags"><span class="tag tag-veg">Vegetarian</span></div></div><div class="mi-right"><span class="mi-price">AED 28</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Palak Paneer</div><div class="mi-desc">Cottage cheese in creamy spinach</div><div class="mi-tags"><span class="tag tag-veg">Vegetarian</span><span class="tag tag-new">New</span></div></div><div class="mi-right"><span class="mi-price">AED 30</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Butter Naan</div><div class="mi-desc">Tandoor-baked bread with butter</div><div class="mi-tags"><span class="tag tag-pop">Always Ordered</span></div></div><div class="mi-right"><span class="mi-price">AED 8</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Garlic Naan</div><div class="mi-desc">Tandoor bread with garlic & herbs</div></div><div class="mi-right"><span class="mi-price">AED 10</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+      <!-- GRILLS -->
+      <div class="menu-chapter" id="c-grills">
+        <div class="chapter-header">
+          <span class="chapter-icon">🔥</span>
+          <span class="chapter-title">Grills</span>
+          <span class="chapter-badge">4 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Mixed Chicken Grill</div><div class="mi-desc">Kebab + shish + tikka on charcoal</div><div class="mi-tags"><span class="tag tag-pop">Best Value</span></div></div><div class="mi-right"><span class="mi-price">AED 55</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Whole Grilled Chicken</div><div class="mi-desc">Marinated whole chicken, charcoal-grilled</div><div class="mi-tags"><span class="tag tag-hot">Hot</span></div></div><div class="mi-right"><span class="mi-price">AED 45</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Grilled Fish</div><div class="mi-desc">Fresh fish, grilled with lemon herbs</div></div><div class="mi-right"><span class="mi-price">AED 50</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Lamb Kebab</div><div class="mi-desc">Minced lamb skewers, grilled to perfection</div><div class="mi-tags"><span class="tag tag-new">New</span></div></div><div class="mi-right"><span class="mi-price">AED 48</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+      <!-- SHAWARMA -->
+      <div class="menu-chapter" id="c-shawarma">
+        <div class="chapter-header">
+          <span class="chapter-icon">🌯</span>
+          <span class="chapter-title">Shawarma</span>
+          <span class="chapter-badge">4 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Shawarma — Regular</div><div class="mi-desc">Chicken, tahini, cucumber, tomato</div><div class="mi-tags"><span class="tag tag-pop">Top Seller</span></div></div><div class="mi-right"><span class="mi-price">AED 18</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Shawarma — Spicy</div><div class="mi-desc">Chicken with special hot sauce</div><div class="mi-tags"><span class="tag tag-hot">Spicy</span><span class="tag tag-pop">Top Seller</span></div></div><div class="mi-right"><span class="mi-price">AED 18</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Lamb Shawarma</div><div class="mi-desc">Lamb with garlic & parsley</div></div><div class="mi-right"><span class="mi-price">AED 22</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Shawarma Platter</div><div class="mi-desc">Shawarma with rice, salad & sauce</div><div class="mi-tags"><span class="tag tag-new">New</span></div></div><div class="mi-right"><span class="mi-price">AED 32</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+      <!-- INDO-CHINESE -->
+      <div class="menu-chapter" id="c-indochinese">
+        <div class="chapter-header">
+          <span class="chapter-icon">🍜</span>
+          <span class="chapter-title">Indo-Chinese</span>
+          <span class="chapter-badge">4 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Hakka Noodles</div><div class="mi-desc">Stir-fried noodles, Indo-Chinese style</div><div class="mi-tags"><span class="tag tag-pop">Top Ordered</span></div></div><div class="mi-right"><span class="mi-price">AED 28</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Beef Hakka Noodles</div><div class="mi-desc">Beef noodles with soy-chili glaze</div><div class="mi-tags"><span class="tag tag-hot">Hot</span><span class="tag tag-pop">Popular</span></div></div><div class="mi-right"><span class="mi-price">AED 30</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Fried Rice</div><div class="mi-desc">Wok-fried rice with chicken & egg</div></div><div class="mi-right"><span class="mi-price">AED 25</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Manchurian</div><div class="mi-desc">Crispy chicken in manchurian sauce</div><div class="mi-tags"><span class="tag tag-hot">Hot</span><span class="tag tag-new">New</span></div></div><div class="mi-right"><span class="mi-price">AED 32</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+      <!-- BIRYANI -->
+      <div class="menu-chapter" id="c-biryani">
+        <div class="chapter-header">
+          <span class="chapter-icon">🍚</span>
+          <span class="chapter-title">Biryani</span>
+          <span class="chapter-badge">4 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Biryani</div><div class="mi-desc">Basmati rice layered with spiced chicken</div><div class="mi-tags"><span class="tag tag-pop">Most Ordered</span></div></div><div class="mi-right"><span class="mi-price">AED 30</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Mutton Biryani</div><div class="mi-desc">Hyderabadi-style slow-cooked lamb biryani</div><div class="mi-tags"><span class="tag tag-hot">Hot</span></div></div><div class="mi-right"><span class="mi-price">AED 38</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Veg Biryani</div><div class="mi-desc">Fragrant saffron rice with mixed vegetables</div><div class="mi-tags"><span class="tag tag-veg">Vegetarian</span></div></div><div class="mi-right"><span class="mi-price">AED 25</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Prawn Biryani</div><div class="mi-desc">Premium basmati with plump prawns</div><div class="mi-tags"><span class="tag tag-new">New</span></div></div><div class="mi-right"><span class="mi-price">AED 42</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+      <!-- ARABIC -->
+      <div class="menu-chapter" id="c-arabic">
+        <div class="chapter-header">
+          <span class="chapter-icon">🌿</span>
+          <span class="chapter-title">Arabic</span>
+          <span class="chapter-badge">4 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Kabsa</div><div class="mi-desc">Gulf-style aromatic rice with chicken</div><div class="mi-tags"><span class="tag tag-pop">Popular</span></div></div><div class="mi-right"><span class="mi-price">AED 35</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Freekeh with Chicken</div><div class="mi-desc">Levantine roasted grain with chicken</div></div><div class="mi-right"><span class="mi-price">AED 32</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Hummus with Olive Oil</div><div class="mi-desc">Creamy hummus, tahini, premium olive oil</div><div class="mi-tags"><span class="tag tag-veg">Vegetarian</span></div></div><div class="mi-right"><span class="mi-price">AED 15</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Fattoush Salad</div><div class="mi-desc">Fresh Levantine salad with crispy bread</div><div class="mi-tags"><span class="tag tag-veg">Vegetarian</span></div></div><div class="mi-right"><span class="mi-price">AED 18</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+      <!-- PASTA -->
+      <div class="menu-chapter" id="c-pasta">
+        <div class="chapter-header">
+          <span class="chapter-icon">🍝</span>
+          <span class="chapter-title">Pasta</span>
+          <span class="chapter-badge">2 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Pasta Arrabiata</div><div class="mi-desc">Spicy tomato sauce with penne</div><div class="mi-tags"><span class="tag tag-hot">Hot</span></div></div><div class="mi-right"><span class="mi-price">AED 30</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Chicken Alfredo</div><div class="mi-desc">Creamy parmesan sauce with chicken</div><div class="mi-tags"><span class="tag tag-pop">Popular</span></div></div><div class="mi-right"><span class="mi-price">AED 35</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+      <!-- BURGERS -->
+      <div class="menu-chapter" id="c-burgers">
+        <div class="chapter-header">
+          <span class="chapter-icon">🍔</span>
+          <span class="chapter-title">Burgers</span>
+          <span class="chapter-badge">2 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Classic Chicken Burger</div><div class="mi-desc">Crispy chicken fillet with house sauces</div><div class="mi-tags"><span class="tag tag-pop">Most Ordered</span></div></div><div class="mi-right"><span class="mi-price">AED 28</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Beef Smash Burger</div><div class="mi-desc">Double smash patty with American cheese</div><div class="mi-tags"><span class="tag tag-new">New</span></div></div><div class="mi-right"><span class="mi-price">AED 35</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+      <!-- THAI -->
+      <div class="menu-chapter" id="c-thai">
+        <div class="chapter-header">
+          <span class="chapter-icon">🥘</span>
+          <span class="chapter-title">Thai</span>
+          <span class="chapter-badge">2 items</span>
+        </div>
+        <div class="menu-items-grid">
+          <div class="mi"><div class="mi-info"><div class="mi-name">Pad Thai</div><div class="mi-desc">Rice noodles with chicken & peanuts</div><div class="mi-tags"><span class="tag tag-pop">Popular</span></div></div><div class="mi-right"><span class="mi-price">AED 32</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+          <div class="mi"><div class="mi-info"><div class="mi-name">Thai Green Curry</div><div class="mi-desc">Coconut green curry with jasmine rice</div><div class="mi-tags"><span class="tag tag-hot">Spicy</span></div></div><div class="mi-right"><span class="mi-price">AED 35</span><button class="mi-btn" onclick="showToast()">+</button></div></div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<!-- ════════════════════════════════
+     REVIEWS
+════════════════════════════════ -->
+<section class="reviews-section" id="reviews" aria-labelledby="reviews-title">
+  <div class="reviews-inner">
+    <div class="reviews-top">
+      <div>
+        <div class="sec-eyebrow reveal"><span class="sec-eyebrow-line"></span> Customer Reviews</div>
+        <h2 class="sec-title reveal d1" id="reviews-title">What Our <span class="it">Guests Say</span></h2>
+      </div>
+      <div class="overall-rating reveal">
+        <div class="rating-number">4.7</div>
+        <div class="rating-details">
+          <div class="rating-stars-row">
+            <span class="rstar">★</span><span class="rstar">★</span><span class="rstar">★</span>
+            <span class="rstar">★</span><span class="rstar" style="opacity:.5">★</span>
+          </div>
+          <div class="rating-count">Based on 500+ reviews</div>
+          <div class="rating-platform">Verified · Talabat & Deliveroo</div>
+        </div>
+        <div class="rating-bars">
+          <div class="rbar-row"><span>5★</span><div class="rbar-track"><div class="rbar-fill" style="width:78%"></div></div><span style="color:var(--amber-text)">78%</span></div>
+          <div class="rbar-row"><span>4★</span><div class="rbar-track"><div class="rbar-fill" style="width:15%"></div></div><span>15%</span></div>
+          <div class="rbar-row"><span>3★</span><div class="rbar-track"><div class="rbar-fill" style="width:5%"></div></div><span>5%</span></div>
+          <div class="rbar-row"><span>2★</span><div class="rbar-track"><div class="rbar-fill" style="width:2%"></div></div><span>2%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reviews-grid">
+
+      <div class="review-card reveal">
+        <div class="review-quote">"</div>
+        <div class="review-head">
+          <div class="rev-avatar rav-a">AK</div>
+          <div>
+            <div class="rev-name">Ahmed K.</div>
+            <div class="rev-info">Damac Hills 2 resident · 12 orders</div>
+          </div>
+          <div class="rev-stars">
+            <span class="rev-star">★</span><span class="rev-star">★</span>
+            <span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span>
+          </div>
+        </div>
+        <div class="rev-text">
+          The Butter Chicken arrived piping hot and tasted absolutely incredible. 
+          The portion size is generous and the price is very fair. 
+          Easily one of the best restaurants in the area — I order at least twice a week!
+        </div>
+        <div class="rev-dish">Ordered: Butter Chicken + Butter Naan</div>
+        <div class="rev-platform">via Talabat · April 2025</div>
+      </div>
+
+      <div class="review-card reveal d1">
+        <div class="review-quote">"</div>
+        <div class="review-head">
+          <div class="rev-avatar rav-b">SA</div>
+          <div>
+            <div class="rev-name">Sarah A.</div>
+            <div class="rev-info">Local foodie · 8 orders</div>
+          </div>
+          <div class="rev-stars">
+            <span class="rev-star">★</span><span class="rev-star">★</span>
+            <span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span>
+          </div>
+        </div>
+        <div class="rev-text">
+          The spicy chicken shawarma is a 10/10. Delivered in under 30 minutes, 
+          still warm and perfectly wrapped. The garlic sauce is addictive. 
+          I've already recommended Cool Grand to everyone in my building!
+        </div>
+        <div class="rev-dish">Ordered: Spicy Chicken Shawarma × 2</div>
+        <div class="rev-platform">via Deliveroo · March 2025</div>
+      </div>
+
+      <div class="review-card reveal d2">
+        <div class="review-quote">"</div>
+        <div class="review-head">
+          <div class="rev-avatar rav-c">KN</div>
+          <div>
+            <div class="rev-name">Khalid N.</div>
+            <div class="rev-info">Verified buyer · 15 orders</div>
+          </div>
+          <div class="rev-stars">
+            <span class="rev-star">★</span><span class="rev-star">★</span>
+            <span class="rev-star">★</span><span class="rev-star">★</span>
+            <span class="rev-star" style="opacity:.4">★</span>
+          </div>
+        </div>
+        <div class="rev-text">
+          Hakka Noodles are fantastic — properly tossed, great balance of spice. 
+          The Chicken Biryani is equally impressive. Huge variety for one restaurant. 
+          Consistent quality every single order. My family's go-to in Damac Hills.
+        </div>
+        <div class="rev-dish">Ordered: Beef Hakka Noodles + Chicken Biryani</div>
+        <div class="rev-platform">via Talabat · May 2025</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-quote">"</div>
+        <div class="review-head">
+          <div class="rev-avatar rav-d">MP</div>
+          <div>
+            <div class="rev-name">Maria P.</div>
+            <div class="rev-info">Expat resident · 6 orders</div>
+          </div>
+          <div class="rev-stars">
+            <span class="rev-star">★</span><span class="rev-star">★</span>
+            <span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span>
+          </div>
+        </div>
+        <div class="rev-text">
+          The Pad Thai was surprisingly authentic — I wasn't expecting that from 
+          a multi-cuisine spot. Really impressed. The Pasta Alfredo was also creamy 
+          and rich. Great option when your family wants different things!
+        </div>
+        <div class="rev-dish">Ordered: Pad Thai + Chicken Alfredo</div>
+        <div class="rev-platform">via WhatsApp · April 2025</div>
+      </div>
+
+      <div class="review-card reveal d1">
+        <div class="review-quote">"</div>
+        <div class="review-head">
+          <div class="rev-avatar rav-a">RJ</div>
+          <div>
+            <div class="rev-name">Raj J.</div>
+            <div class="rev-info">Regular customer · 22 orders</div>
+          </div>
+          <div class="rev-stars">
+            <span class="rev-star">★</span><span class="rev-star">★</span>
+            <span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span>
+          </div>
+        </div>
+        <div class="rev-text">
+          Best biryani in Damac Hills, no competition. The Mutton Biryani 
+          is slow-cooked to perfection — the meat just falls off the bone. 
+          Dal Makhani is restaurant-grade quality. Always order twice a week!
+        </div>
+        <div class="rev-dish">Ordered: Mutton Biryani + Dal Makhani</div>
+        <div class="rev-platform">via Talabat · February 2025</div>
+      </div>
+
+      <div class="review-card reveal d2">
+        <div class="review-quote">"</div>
+        <div class="review-head">
+          <div class="rev-avatar rav-b">LF</div>
+          <div>
+            <div class="rev-name">Layla F.</div>
+            <div class="rev-info">Food blogger · 9 orders</div>
+          </div>
+          <div class="rev-stars">
+            <span class="rev-star">★</span><span class="rev-star">★</span>
+            <span class="rev-star">★</span><span class="rev-star">★</span>
+            <span class="rev-star" style="opacity:.4">★</span>
+          </div>
+        </div>
+        <div class="rev-text">
+          Reviewed for my blog and genuinely impressed. The Mixed Grill Platter 
+          is exceptional value — huge portions, perfectly charred. Hummus and 
+          Fattoush are fresh and authentic. A must-try for the community.
+        </div>
+        <div class="rev-dish">Ordered: Mixed Grill + Hummus + Fattoush</div>
+        <div class="rev-platform">via WhatsApp · March 2025</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     DELIVERY INTEGRATION
+════════════════════════════════ -->
+<section class="delivery-section" id="order" aria-labelledby="order-title">
+  <div class="delivery-inner">
+    <div class="delivery-layout">
+      <div class="delivery-text reveal">
+        <div class="sec-eyebrow"><span class="sec-eyebrow-line"></span> Order Now</div>
+        <h2 class="sec-title" id="order-title">Three Ways to <span class="it">Get Your Food</span></h2>
+        <p>
+          Order through your favourite platform or talk to us directly on WhatsApp 
+          for custom requests, large orders, and special deals. Average delivery time: <strong>28 minutes</strong>.
+        </p>
+        <div class="delivery-channels">
+          <a class="ch-btn" href="https://www.talabat.com/uae/cool-grand-restaurant" target="_blank" rel="noopener">
+            <div class="ch-logo ch-talabat-bg"><span class="ch-mark">ta</span></div>
+            <div class="ch-text">
+              <strong>Order on Talabat</strong>
+              <span>4.7 ★ · 500+ reviews · Fast delivery</span>
+            </div>
+            <span class="ch-arrow">→</span>
+          </a>
+          <a class="ch-btn" href="https://deliveroo.ae/menu/dubai/damac-hills-two/cool-grand-restaurant" target="_blank" rel="noopener">
+            <div class="ch-logo ch-deliveroo-bg"><span class="ch-mark">roo</span></div>
+            <div class="ch-text">
+              <strong>Order on Deliveroo</strong>
+              <span>Real-time tracking · Avg 32 min</span>
+            </div>
+            <span class="ch-arrow">→</span>
+          </a>
+          <a class="ch-btn" href="https://wa.me/971551019060" target="_blank" rel="noopener">
+            <div class="ch-logo ch-wa-bg">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </div>
+            <div class="ch-text">
+              <strong>WhatsApp Direct Order</strong>
+              <span>+971 55 101 9060 · Custom orders welcome</span>
+            </div>
+            <span class="ch-arrow">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="delivery-contact reveal d2">
+        <div class="dc-title">Find Us & Contact</div>
+        <div class="dc-items">
+          <div class="dc-item">
+            <div class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7.2 7.2 0 0 0-7.2 7.2c0 5.4 7.2 12.8 7.2 12.8s7.2-7.4 7.2-12.8A7.2 7.2 0 0 0 12 2Zm0 9.9a2.7 2.7 0 1 1 0-5.4 2.7 2.7 0 0 1 0 5.4Z"/></svg></div>
+            <div class="dc-body">
+              <div class="dc-label">Address</div>
+              <div class="dc-value">
+                <a href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">VIRIDISPODIUM, MADINATHIND4<br>Damac Hills 2, Dubai - UAE</a>
+                <a class="dc-map-link" href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">Open Google Location</a>
+              </div>
+            </div>
+          </div>
+          <div class="dc-divider"></div>
+          <div class="dc-item">
+            <div class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.1 15.1 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"/></svg></div>
+            <div class="dc-body">
+              <div class="dc-label">Landline</div>
+              <div class="dc-value"><a href="tel:048853060">04 885 3060</a></div>
+            </div>
+          </div>
+          <div class="dc-item">
+            <div class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2A9.86 9.86 0 0 0 2.2 11.84c0 1.74.46 3.43 1.34 4.92L2 22l5.38-1.42a9.83 9.83 0 0 0 4.66 1.18h.01A9.86 9.86 0 0 0 12.04 2Zm0 1.9a7.96 7.96 0 0 1 .01 15.92h-.01a7.9 7.9 0 0 1-4.04-1.1l-.29-.17-3.05.8.82-2.96-.19-.31a7.92 7.92 0 0 1-1.2-4.24 7.96 7.96 0 0 1 7.95-7.94Z"/></svg></div>
+            <div class="dc-body">
+              <div class="dc-label">WhatsApp</div>
+              <div class="dc-value"><a href="https://wa.me/971551019060" target="_blank">+971 55 101 9060</a></div>
+            </div>
+          </div>
+          <div class="dc-item">
+            <div class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm8.85 1.55a1.35 1.35 0 1 1 0 2.7 1.35 1.35 0 0 1 0-2.7ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></div>
+            <div class="dc-body">
+              <div class="dc-label">Instagram</div>
+              <div class="dc-value"><a href="https://www.instagram.com/coolgrandrestaurant/" target="_blank">@coolgrandrestaurant</a></div>
+            </div>
+          </div>
+        </div>
+        <div class="dc-hours">
+          <div class="dc-hours-title">Opening Hours</div>
+          <div class="dc-hour-row"><span>Monday – Thursday</span><span>9:00 AM – 1:00 AM</span></div>
+          <div class="dc-hour-row"><span>Friday</span><span>10:00 AM – 2:00 AM</span></div>
+          <div class="dc-hour-row"><span>Saturday – Sunday</span><span>9:00 AM – 1:00 AM</span></div>
+          <div class="dc-hour-row"><span>Delivery Available</span><span>All hours ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     FOOTER
+════════════════════════════════ -->
+<footer role="contentinfo">
+  <div class="foot-inner">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="foot-logo-row">
+          <div class="foot-logo-box">CG</div>
+          <span class="foot-brand-name">Cool Grand Restaurant</span>
+        </div>
+        <p class="foot-desc">
+          Nine world cuisines under one roof in the heart of Damac Hills 2, Dubai. 
+          Indian, Grills, Shawarma, Indo-Chinese, Biryani, Arabic, Pasta, Burgers & Thai.
+          Rated 4.7 ★ on Talabat with 500+ verified reviews.
+        </p>
+        <div class="foot-socials" aria-label="Cool Grand social and delivery links">
+          <a class="fsoc" href="https://www.instagram.com/coolgrandrestaurant/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm8.85 1.55a1.35 1.35 0 1 1 0 2.7 1.35 1.35 0 0 1 0-2.7ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+          </a>
+          <a class="fsoc" href="https://wa.me/971551019060" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2A9.86 9.86 0 0 0 2.2 11.84c0 1.74.46 3.43 1.34 4.92L2 22l5.38-1.42a9.83 9.83 0 0 0 4.66 1.18h.01A9.86 9.86 0 0 0 12.04 2Zm0 1.9a7.96 7.96 0 0 1 .01 15.92h-.01a7.9 7.9 0 0 1-4.04-1.1l-.29-.17-3.05.8.82-2.96-.19-.31a7.92 7.92 0 0 1-1.2-4.24 7.96 7.96 0 0 1 7.95-7.94Zm-3.12 3.88c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.76 2.68 4.27 3.76.6.26 1.06.41 1.42.52.6.19 1.15.16 1.58.1.48-.07 1.48-.6 1.69-1.19.21-.58.21-1.09.15-1.19-.06-.11-.23-.17-.48-.3-.25-.12-1.48-.73-1.71-.81-.23-.08-.4-.12-.56.13-.17.25-.65.81-.79.97-.15.17-.29.19-.54.06-.25-.12-1.06-.39-2.02-1.25-.75-.66-1.25-1.49-1.39-1.74-.15-.25-.02-.38.11-.51.11-.11.25-.29.38-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.49Z"/></svg>
+          </a>
+          <a class="fsoc fsoc-word" href="https://www.talabat.com/uae/cool-grand-restaurant" target="_blank" rel="noopener" aria-label="Talabat">ta</a>
+          <a class="fsoc fsoc-word" href="https://deliveroo.ae/menu/dubai/damac-hills-two/cool-grand-restaurant" target="_blank" rel="noopener" aria-label="Deliveroo">roo</a>
+          <a class="fsoc" href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" aria-label="Google Maps">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7.2 7.2 0 0 0-7.2 7.2c0 5.4 7.2 12.8 7.2 12.8s7.2-7.4 7.2-12.8A7.2 7.2 0 0 0 12 2Zm0 9.9a2.7 2.7 0 1 1 0-5.4 2.7 2.7 0 0 1 0 5.4Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Cuisines</h4>
+        <ul>
+          <li><a href="#c-indian">Indian</a></li>
+          <li><a href="#c-grills">Grills</a></li>
+          <li><a href="#c-shawarma">Shawarma</a></li>
+          <li><a href="#c-indochinese">Indo-Chinese</a></li>
+          <li><a href="#c-biryani">Biryani</a></li>
+          <li><a href="#c-arabic">Arabic</a></li>
+          <li><a href="#c-pasta">Pasta</a></li>
+          <li><a href="#c-burgers">Burgers</a></li>
+          <li><a href="#c-thai">Thai</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Order Now</h4>
+        <ul>
+          <li><a href="https://www.talabat.com/uae/cool-grand-restaurant" target="_blank" rel="noopener"><span class="foot-link-icon">ta</span>Talabat</a></li>
+          <li><a href="https://deliveroo.ae/menu/dubai/damac-hills-two/cool-grand-restaurant" target="_blank" rel="noopener"><span class="foot-link-icon">roo</span>Deliveroo</a></li>
+          <li><a href="https://wa.me/971551019060" target="_blank" rel="noopener"><span class="foot-link-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2A9.86 9.86 0 0 0 2.2 11.84c0 1.74.46 3.43 1.34 4.92L2 22l5.38-1.42a9.83 9.83 0 0 0 4.66 1.18h.01A9.86 9.86 0 0 0 12.04 2Zm0 1.9a7.96 7.96 0 0 1 .01 15.92h-.01a7.9 7.9 0 0 1-4.04-1.1l-.29-.17-3.05.8.82-2.96-.19-.31a7.92 7.92 0 0 1-1.2-4.24 7.96 7.96 0 0 1 7.95-7.94Z"/></svg></span>WhatsApp Order</a></li>
+          <li><a href="tel:048853060"><span class="foot-link-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.1 15.1 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2Z"/></svg></span>04 885 3060</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Visit Us</h4>
+        <ul>
+          <li><a href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">VIRIDISPODIUM</a></li>
+          <li><a href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">MADINATHIND4</a></li>
+          <li><a href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">Damac Hills 2</a></li>
+          <li><a href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">Dubai - UAE</a></li>
+          <li><a href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener"><span class="foot-link-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7.2 7.2 0 0 0-7.2 7.2c0 5.4 7.2 12.8 7.2 12.8s7.2-7.4 7.2-12.8A7.2 7.2 0 0 0 12 2Zm0 9.9a2.7 2.7 0 1 1 0-5.4 2.7 2.7 0 0 1 0 5.4Z"/></svg></span>Open in Maps</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-bottom-copy">
+        <p>© 2025 Cool Grand Restaurant · All rights reserved · Damac Hills 2, Dubai, UAE</p>
+        <a class="foot-credit" href="https://www.linkedin.com/in/ahmed-farouk-01b279286/" target="_blank" rel="noopener">Designed & Developed by Ahmed Farouk</a>
+      </div>
+      <div class="foot-rating">⭐ 4.7 rated · 500+ happy customers · @coolgrandrestaurant</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════════════════════
+     ORDER SYSTEM — CART FAB
+════════════════════════════════ -->
+<button class="cart-fab" id="cartFab" onclick="openOrderModal()" aria-label="View cart and place order">
+  <span class="cart-fab-icon">🛒</span>
+  <span id="cartFabText">Place Order</span>
+  <span class="cart-fab-count" id="cartFabCount" style="display:none">0</span>
+</button>
+
+<!-- ════════════════════════════════
+     ORDER MODAL
+════════════════════════════════ -->
+<div class="om-overlay" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="om-title-text">
+  <div class="om-box" id="omBox">
+
+    <div class="om-header">
+      <div class="om-header-text">
+        <div class="om-title" id="om-title-text">Place Your Order</div>
+        <div class="om-subtitle">We'll confirm via WhatsApp within minutes</div>
+      </div>
+      <button class="om-close" onclick="closeOrderModal()" aria-label="Close">✕</button>
+    </div>
+
+    <div id="omFormBody">
+      <!-- Cart summary -->
+      <div class="om-cart">
+        <div class="om-cart-header">
+          <span class="om-cart-title">Your Items</span>
+          <button class="om-cart-clear" onclick="clearCart()">Clear all</button>
+        </div>
+        <div class="om-cart-list" id="omCartList">
+          <div class="om-cart-empty" id="omCartEmpty">No items yet — quick-select below or add from menu</div>
+        </div>
+        <div class="om-cart-footer" id="omCartFooter" style="display:none">
+          <span class="om-cart-total-label">Estimated Total</span>
+          <span class="om-cart-total-val" id="omCartTotal">AED 0</span>
+        </div>
+      </div>
+
+      <!-- Quick-add chips -->
+      <div class="om-form" style="padding-bottom:0">
+        <div class="om-quick">
+          <div class="om-quick-label">Quick-add popular items</div>
+          <div class="om-quick-grid" id="omQuickGrid"></div>
+        </div>
+      </div>
+
+      <!-- Contact form -->
+      <div class="om-form">
+        <div class="om-form-row">
+          <div class="om-form-group">
+            <label class="om-label" for="omName">Your Name <span class="req">*</span></label>
+            <input class="om-input" id="omName" type="text" placeholder="e.g. Ahmed Al Rashid" autocomplete="name">
+          </div>
+          <div class="om-form-group">
+            <label class="om-label" for="omPhone">Phone Number <span class="req">*</span></label>
+            <input class="om-input" id="omPhone" type="tel" placeholder="+971 50 000 0000" autocomplete="tel">
+          </div>
+        </div>
+        <div class="om-form-group">
+          <label class="om-label" for="omAddress">Delivery Address <span class="req">*</span></label>
+          <input class="om-input" id="omAddress" type="text" placeholder="Villa/Apt, building, street — Damac Hills 2" autocomplete="street-address">
+        </div>
+        <div class="om-form-group">
+          <label class="om-label" for="omNotes">Special Instructions <span style="font-weight:400;opacity:.6">(optional)</span></label>
+          <textarea class="om-textarea" id="omNotes" placeholder="e.g. No onions, extra spicy, leave at door…"></textarea>
+        </div>
+        <div class="om-actions">
+          <button class="om-submit" id="omSubmitWa" onclick="submitWhatsApp()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Send Order via WhatsApp
+          </button>
+          <button class="om-email-btn" onclick="submitEmail()">✉️ Send via Email instead</button>
+          <p class="om-footnote">No payment required — we'll confirm and provide total before delivery.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div class="om-success" id="omSuccess">
+      <div class="om-success-icon">🎉</div>
+      <div class="om-success-title">Order Sent!</div>
+      <div class="om-success-text">Your order has been sent to our team on WhatsApp.<br>We'll confirm and provide an ETA within minutes.</div>
+      <div class="om-success-back">
+        <button class="om-email-btn" style="max-width:200px;margin:0 auto" onclick="closeOrderModal()">Back to Menu</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ─── Navbar elevation on scroll ─── */
+const nav = document.getElementById('nav');
+/* RAF-throttled scroll — single rAF loop for all scroll work */
+let _lastSY = 0, _ticking = false;
+function onScroll() {
+  _lastSY = window.scrollY;
+  if (!_ticking) {
+    requestAnimationFrame(() => {
+      // Navbar
+      nav.classList.toggle('elevated', _lastSY > 20);
+      // FAB visibility
+      if (_lastSY > window.innerHeight * 0.6) showCartFab();
+      else if (!cartCount()) hideCartFab();
+      // Sidebar active chapter
+      let cur = '';
+      chapters.forEach(ch => {
+        const r = ch.getBoundingClientRect();
+        if (r.top < 150 && r.bottom > 100) cur = ch.id;
+      });
+      if (cur) {
+        navBtns.forEach((btn, i) => {
+          if (i > 0 && chapterIds[i-1] === cur) {
+            navBtns.forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
+            btn.classList.add('active'); btn.setAttribute('aria-current','true');
+          }
+        });
+      }
+      _ticking = false;
+    });
+    _ticking = true;
+  }
+}
+window.addEventListener('scroll', onScroll, { passive:true });
+
+/* ─── Scroll reveal ─── */
+const revealIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); revealIO.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+/* ─── Animated counters ─── */
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target, 10);
+  const isDecimal = el.dataset.decimal === 'true';
+  const duration = 1800;
+  const start = performance.now();
+  const from = 0;
+
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = from + (target - from) * eased;
+    if (isDecimal) {
+      el.textContent = (current / 10).toFixed(1);
+    } else {
+      el.textContent = Math.floor(current).toLocaleString();
+    }
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+const counterIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCounter(e.target);
+      counterIO.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(el => counterIO.observe(el));
+
+/* ─── Sidebar navigation ─── */
+function sideNav(sectionId, btn) {
+  document.querySelectorAll('.sidebar-nav-btn').forEach(b => {
+    b.classList.remove('active');
+    b.removeAttribute('aria-current');
+  });
+  if (btn) { btn.classList.add('active'); btn.setAttribute('aria-current', 'true'); }
+
+  if (chapterIds.includes(sectionId)) {
+    openMenuChapter(sectionId, true);
+    return;
+  }
+
+  const target = document.getElementById(sectionId);
+  if (target) {
+    const offset = 90;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
+/* ─── Chapter/sidebar state — handled in unified RAF scroll above ─── */
+const chapters = document.querySelectorAll('.menu-chapter');
+const navBtns = document.querySelectorAll('.sidebar-nav-btn');
+const chapterIds = ['c-indian','c-grills','c-shawarma','c-indochinese','c-biryani','c-arabic','c-pasta','c-burgers','c-thai'];
+
+function openMenuChapter(sectionId, shouldScroll = false) {
+  const target = document.getElementById(sectionId);
+  if (!target) return;
+
+  chapters.forEach(chapter => {
+    const isActive = chapter.id === sectionId;
+    chapter.classList.toggle('active-chapter', isActive);
+    chapter.querySelector('.chapter-header')?.setAttribute('aria-expanded', String(isActive));
+  });
+
+  navBtns.forEach((btn, index) => {
+    const isActive = index > 0 && chapterIds[index - 1] === sectionId;
+    btn.classList.toggle('active', isActive);
+    if (isActive) btn.setAttribute('aria-current', 'true');
+    else btn.removeAttribute('aria-current');
+  });
+
+  if (shouldScroll) {
+    requestAnimationFrame(() => {
+      const offset = 94;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  }
+}
+
+chapters.forEach(chapter => {
+  const header = chapter.querySelector('.chapter-header');
+  if (!header) return;
+
+  header.setAttribute('role', 'button');
+  header.setAttribute('tabindex', '0');
+  header.setAttribute('aria-controls', chapter.id + '-items');
+  chapter.querySelector('.menu-items-grid')?.setAttribute('id', chapter.id + '-items');
+
+  header.addEventListener('click', () => openMenuChapter(chapter.id, true));
+  header.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openMenuChapter(chapter.id, true);
+    }
+  });
+});
+
+openMenuChapter(chapterIds.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'c-indian');
+
+/* ─── Toast (kept for compatibility) ─── */
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (msg) t.querySelector('span:last-child') && (t.innerHTML = '<span class="toast-icon">✓</span> ' + msg);
+  clearTimeout(toastTimer);
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ─── CSS-driven img reveal (class toggle only, no inline styles) ─── */
+{
+  const lazyImgs = document.querySelectorAll('img[loading="lazy"]');
+  const revealImg = img => img.classList.add('loaded');
+  lazyImgs.forEach(img => {
+    if (img.complete && img.naturalWidth) revealImg(img);
+    else img.addEventListener('load', () => revealImg(img), { once:true });
+  });
+}
+
+/* ─── Premium bilingual experience ─── */
+const LANG_KEY = 'coolGrandLanguage';
+let currentLang = 'en';
+const textOriginals = new WeakMap();
+const attrOriginals = new WeakMap();
+
+function normalizeText(text) {
+  return String(text || '').replace(/\s+/g, ' ').trim();
+}
+
+const AR_TEXT = {
+  'Added — order via WhatsApp to confirm!': 'تمت الإضافة - أكّد طلبك عبر واتساب',
+  'Cool Grand': 'كول جراند',
+  'RESTAURANT · DUBAI': 'مطعم · دبي',
+  'Cuisines': 'المطابخ',
+  'Dishes': 'الأطباق',
+  'Menu': 'القائمة',
+  'Reviews': 'التقييمات',
+  'Order': 'اطلب',
+  'WhatsApp': 'واتساب',
+  'Order Now': 'اطلب الآن',
+  'Open Now · Damac Hills 2, Dubai': 'مفتوح الآن · داماك هيلز 2، دبي',
+  'Nine World': 'تسعة مطابخ',
+  'Cuisines,': 'عالمية،',
+  'One Place': 'في مكان واحد',
+  "From sizzling Indian curries to authentic Arabic grills, Cool Grand brings the world's finest flavors to your table — or your doorstep.": 'من الكاري الهندي الغني إلى المشاوي العربية الأصيلة، يقدّم كول جراند أشهى النكهات العالمية إلى طاولتك أو حتى باب منزلك.',
+  'Indian': 'هندي',
+  'Grills': 'مشاوي',
+  'Shawarma': 'شاورما',
+  'Indo-Chinese': 'هندي صيني',
+  'Biryani': 'برياني',
+  'Arabic': 'عربي',
+  'Pasta': 'باستا',
+  'Burgers': 'برجر',
+  'Thai': 'تايلاندي',
+  'View Full Menu': 'عرض القائمة كاملة',
+  'Order via WhatsApp': 'اطلب عبر واتساب',
+  'Verified on Talabat & Google': 'موثّق على طلبات وجوجل',
+  'TALABAT · DELIVEROO': 'طلبات · دليفرو',
+  'Avg Delivery': 'متوسط التوصيل',
+  'For Damac Hills 2': 'داخل داماك هيلز 2',
+  'Google Rating': 'تقييم جوجل',
+  'From verified guests': 'من عملاء موثّقين',
+  'Under one roof': 'تحت سقف واحد',
+  'Chicken Shawarma': 'شاورما دجاج',
+  'Butter Chicken': 'دجاج بالزبدة',
+  'Hakka Noodles': 'نودلز هاكا',
+  'Butter Naan': 'نان بالزبدة',
+  'Explore Cuisines': 'استكشف المطابخ',
+  'All Cuisines': 'كل المطابخ',
+  'Quick Order': 'طلب سريع',
+  'QUICK ORDER': 'طلب سريع',
+  'Tap items to add. We’ll confirm your order on WhatsApp.': 'اختر الأطباق التي تريدها وسنؤكد طلبك عبر واتساب.',
+  'Order on WhatsApp': 'اطلب عبر واتساب',
+  'Our Cuisines': 'مطابخنا',
+  'Nine Kitchens, One Roof': 'تسعة مطابخ، سقف واحد',
+  'Nine Kitchens,': 'تسعة مطابخ،',
+  'One Roof': 'سقف واحد',
+  'Click any cuisine to jump straight to its menu': 'اختر أي مطبخ للانتقال مباشرة إلى قائمته',
+  'Explore Our Worlds': 'استكشف نكهاتنا',
+  'Choose what you’re craving, then jump straight into that menu.': 'اختر نوع الطعام الذي تشتهيه، وانتقل مباشرة إلى قائمته.',
+  'Rich curries, tandoor breads & aromatic spices from Mumbai to Delhi': 'كاري غني، خبز تنور وتوابل عطرية من مومباي إلى دلهي',
+  'Charcoal-fired chicken, lamb & fish, juicy and flame-kissed': 'دجاج ولحم وسمك على الفحم بطعم غني ونكهة شواء أصيلة',
+  'Marinated chicken & lamb wrapped with tahini, pickles & garlic': 'دجاج ولحم متبل داخل خبز طري مع طحينة ومخللات وثوم',
+  'The bold fusion of Indian spice with Chinese technique — noodles & wok-fried dishes': 'مزيج جريء بين التوابل الهندية وتقنيات الطبخ الصينية في النودلز وأطباق الووك',
+  'Slow-cooked fragrant basmati layered with chicken, lamb or prawns': 'أرز بسمتي عطري مطهو ببطء بطبقات من الدجاج أو اللحم أو الروبيان',
+  'Authentic Levantine & Gulf dishes — mezze, kabsa, freekeh': 'أطباق شامية وخليجية أصيلة: مقبلات، كبسة وفريكة',
+  'Classic Italian pasta — creamy alfredo, spicy arrabiata': 'باستا إيطالية كلاسيكية: ألفريدو كريمي وأرابياتا حارة',
+  'Crispy chicken or smash beef patties with premium toppings': 'دجاج مقرمش أو لحم سماش مع إضافات غنية',
+  'Rich curries, tandoor breads, creamy dals & paneer favourites': 'كاري غني، خبز التنور، دال كريمي وأطباق بانير مميزة',
+  'Charcoal chicken, kebabs, grilled fish and mixed platters': 'دجاج على الفحم، كباب، سمك مشوي وأطباق مشاوي مشكلة',
+  'Fresh wraps, spicy options and loaded shawarma platters': 'ساندويتشات طازجة، خيارات حارة وأطباق شاورما كاملة',
+  'Hakka noodles, fried rice, manchurian and wok-tossed classics': 'نودلز هاكا، أرز مقلي، مانشوريان وأطباق ووك كلاسيكية',
+  'Chicken, mutton, veg and prawn biryani with aromatic basmati rice': 'برياني دجاج ولحم وخضار وروبيان مع أرز بسمتي عطري',
+  'Kabsa, hummus, fattoush and comforting Middle Eastern plates': 'كبسة، حمص، فتوش وأطباق شرق أوسطية مريحة',
+  'Arrabiata, Alfredo and creamy comfort pasta bowls': 'أرابياتا، ألفريدو وأطباق باستا كريمية',
+  'Crispy chicken, smash beef and comfort burgers for every mood': 'برجر دجاج كرسبي وسماش بيف لكل مزاج',
+  'Pad Thai, green & red curries bursting with Southeast Asian warmth': 'باد تاي وكاري أخضر وأحمر بنكهات جنوب شرق آسيا',
+  'items': 'أطباق',
+  'item': 'طبق',
+  'Most Popular': 'الأكثر طلبًا',
+  'Fan': 'اختيارات',
+  'Favourites': 'العملاء',
+  'Customer Reviews': 'تقييمات العملاء',
+  'What Our Guests Say': 'آراء ضيوفنا',
+  'What Our': 'ماذا يقول',
+  'Guests Say': 'ضيوفنا',
+  'Based on 500+ reviews': 'بناءً على أكثر من 500 تقييم',
+  'Verified · Talabat & Deliveroo': 'موثّق · طلبات ودليفرو',
+  'The Butter Chicken arrived piping hot and tasted absolutely incredible. The portion size is generous and the price is very fair. Easily one of the best restaurants in the area — I order at least twice a week!': 'وصل دجاج الزبدة ساخنًا وطعمه رائع جدًا. حجم الوجبة كريم والسعر مناسب. من أفضل المطاعم في المنطقة، وأطلب منه مرتين أسبوعيًا على الأقل!',
+  'The spicy chicken shawarma is a 10/10. Delivered in under 30 minutes, still warm and perfectly wrapped. The garlic sauce is addictive. I\'ve already recommended Cool Grand to everyone in my building!': 'شاورما الدجاج الحارة تستحق 10/10. وصلت في أقل من 30 دقيقة وكانت دافئة ومغلفة بإتقان. صوص الثوم ممتاز، وقد رشحت كول جراند لكل من في المبنى.',
+  'Hakka Noodles are fantastic — properly tossed, great balance of spice. The Chicken Biryani is equally impressive. Huge variety for one restaurant. Consistent quality every single order. My family\'s go-to in Damac Hills.': 'نودلز هاكا ممتازة ومتوازنة في التوابل. برياني الدجاج رائع أيضًا. تنوع كبير لمطعم واحد وجودة ثابتة في كل طلب. اختيار عائلتي المفضل في داماك هيلز.',
+  'The Pad Thai was surprisingly authentic — I wasn\'t expecting that from a multi-cuisine spot. Really impressed. The Pasta Alfredo was also creamy and rich. Great option when your family wants different things!': 'باد تاي كان أصيلًا بشكل مفاجئ، ولم أتوقع هذا المستوى من مطعم متعدد المطابخ. باستا ألفريدو كانت كريمية وغنية أيضًا. خيار رائع عندما يريد كل فرد في العائلة طبقًا مختلفًا.',
+  'Best biryani in Damac Hills, no competition. The Mutton Biryani is slow-cooked to perfection — the meat just falls off the bone. Dal Makhani is restaurant-grade quality. Always order twice a week!': 'أفضل برياني في داماك هيلز بلا منافس. برياني اللحم مطهو ببطء بإتقان واللحم طري جدًا. دال مخاني بجودة مطعم راقٍ. أطلب منه مرتين أسبوعيًا دائمًا.',
+  'Reviewed for my blog and genuinely impressed. The Mixed Grill Platter is exceptional value — huge portions, perfectly charred. Hummus and Fattoush are fresh and authentic. A must-try for the community.': 'جرّبته لمراجعته في مدونتي وانبهرت فعلًا. طبق المشاوي المشكل قيمته ممتازة، الكمية كبيرة والشواء متقن. الحمص والفتوش طازجان وأصيلان. تجربة تستحق لأهل المنطقة.',
+  '#1–4 bestsellers on Talabat this week': 'الأطباق الأكثر مبيعًا على طلبات هذا الأسبوع',
+  'Tender chicken in a silky tomato-butter cream sauce with aromatic garam masala': 'قطع دجاج طرية في صوص طماطم وزبدة كريمي مع جارام ماسالا عطرية',
+  'Marinated rotisserie chicken, fresh veggies, tahini sauce, wrapped in soft bread': 'دجاج شاورما متبل، خضار طازجة وصوص طحينة داخل خبز طري',
+  'Wok-tossed noodles with chicken, bell peppers & a savory soy-chili sauce': 'نودلز مطهوة في الووك مع الدجاج والفلفل وصوص الصويا الحار',
+  'Freshly baked tandoor bread, glazed with real butter — the perfect side': 'خبز تنور طازج مدهون بالزبدة، إضافة مثالية لأي طبق',
+  'Most Ordered': 'الأكثر طلبًا',
+  'Top Seller': 'الأكثر مبيعًا',
+  'Spicy Option': 'خيار حار',
+  'Trending': 'رائج',
+  'Hot': 'حار',
+  'Always Ordered': 'دائم الطلب',
+  'Vegetarian': 'نباتي',
+  'Add to order →': 'أضف إلى الطلب ←',
+  'Complete Menu': 'القائمة الكاملة',
+  'Every': 'كل',
+  'Dish': 'طبق',
+  'We Make': 'نقدمه',
+  'Butter Chicken': 'دجاج بالزبدة',
+  'Chicken Tikka Masala': 'دجاج تيكا ماسالا',
+  'Dal Makhani': 'دال مخاني',
+  'Palak Paneer': 'بالاك بانير',
+  'Garlic Naan': 'نان بالثوم',
+  'Mixed Chicken Grill': 'مشاوي دجاج مشكلة',
+  'Whole Grilled Chicken': 'دجاج مشوي كامل',
+  'Grilled Fish': 'سمك مشوي',
+  'Lamb Kebab': 'كباب لحم',
+  'Chicken Shawarma — Regular': 'شاورما دجاج - عادي',
+  'Chicken Shawarma — Spicy': 'شاورما دجاج - حار',
+  'Lamb Shawarma': 'شاورما لحم',
+  'Shawarma Platter': 'طبق شاورما',
+  'Chicken Hakka Noodles': 'نودلز هاكا بالدجاج',
+  'Beef Hakka Noodles': 'نودلز هاكا باللحم',
+  'Chicken Fried Rice': 'أرز مقلي بالدجاج',
+  'Chicken Manchurian': 'دجاج مانشوريان',
+  'Chicken Biryani': 'برياني دجاج',
+  'Mutton Biryani': 'برياني لحم',
+  'Veg Biryani': 'برياني خضار',
+  'Prawn Biryani': 'برياني روبيان',
+  'Chicken Kabsa': 'كبسة دجاج',
+  'Freekeh with Chicken': 'فريكة بالدجاج',
+  'Hummus with Olive Oil': 'حمص بزيت الزيتون',
+  'Fattoush Salad': 'سلطة فتوش',
+  'Pasta Arrabiata': 'باستا أرابياتا',
+  'Chicken Alfredo': 'دجاج ألفريدو',
+  'Classic Chicken Burger': 'برجر دجاج كلاسيك',
+  'Beef Smash Burger': 'سماش برجر لحم',
+  'Pad Thai': 'باد تاي',
+  'Thai Green Curry': 'كاري تايلاندي أخضر',
+  'Chicken in tomato-cream sauce': 'دجاج في صوص طماطم وكريمة',
+  'Grilled chicken in masala sauce': 'دجاج مشوي في صوص ماسالا',
+  'Black lentils slow-cooked with butter': 'عدس أسود مطهو ببطء مع الزبدة',
+  'Cottage cheese in creamy spinach': 'جبن بانير في سبانخ كريمية',
+  'Tandoor-baked bread with butter': 'خبز تنور مدهون بالزبدة',
+  'Tandoor bread with garlic & herbs': 'خبز تنور بالثوم والأعشاب',
+  'Kebab + shish + tikka on charcoal': 'كباب وشيش وتيكا على الفحم',
+  'Marinated whole chicken, charcoal-grilled': 'دجاج كامل متبل ومشوي على الفحم',
+  'Fresh fish, grilled with lemon herbs': 'سمك طازج مشوي بالليمون والأعشاب',
+  'Minced lamb skewers, grilled to perfection': 'أسياخ لحم مفروم مشوية بإتقان',
+  'Chicken, tahini, cucumber, tomato': 'دجاج، طحينة، خيار وطماطم',
+  'Chicken with special hot sauce': 'دجاج مع صوص حار خاص',
+  'Lamb with garlic & parsley': 'لحم مع الثوم والبقدونس',
+  'Shawarma with rice, salad & sauce': 'شاورما مع أرز وسلطة وصوص',
+  'Stir-fried noodles, Indo-Chinese style': 'نودلز مقلية على الطريقة الهندية الصينية',
+  'Beef noodles with soy-chili glaze': 'نودلز باللحم مع صوص صويا وفلفل',
+  'Wok-fried rice with chicken & egg': 'أرز مقلي في الووك مع الدجاج والبيض',
+  'Crispy chicken in manchurian sauce': 'دجاج مقرمش في صوص مانشوريان',
+  'Basmati rice layered with spiced chicken': 'أرز بسمتي بطبقات الدجاج المتبل',
+  'Hyderabadi-style slow-cooked lamb biryani': 'برياني لحم مطهو ببطء على طريقة حيدر آباد',
+  'Fragrant saffron rice with mixed vegetables': 'أرز بالزعفران مع خضار مشكلة',
+  'Premium basmati with plump prawns': 'بسمتي فاخر مع روبيان طازج',
+  'Gulf-style aromatic rice with chicken': 'أرز خليجي عطري مع الدجاج',
+  'Levantine roasted grain with chicken': 'حبوب فريكة شامية مع الدجاج',
+  'Creamy hummus, tahini, premium olive oil': 'حمص كريمي، طحينة وزيت زيتون فاخر',
+  'Fresh Levantine salad with crispy bread': 'سلطة شامية طازجة مع خبز مقرمش',
+  'Spicy tomato sauce with penne': 'صوص طماطم حار مع باستا بيني',
+  'Creamy parmesan sauce with chicken': 'صوص بارميزان كريمي مع الدجاج',
+  'Crispy chicken fillet with house sauces': 'فيليه دجاج مقرمش مع صوصات المطعم',
+  'Double smash patty with American cheese': 'قطعتا لحم سماش مع جبن أمريكي',
+  'Rice noodles with chicken & peanuts': 'نودلز أرز مع الدجاج والفول السوداني',
+  'Coconut green curry with jasmine rice': 'كاري أخضر بجوز الهند مع أرز ياسمين',
+  'Best Value': 'أفضل قيمة',
+  'New': 'جديد',
+  'Spicy': 'حار',
+  'Popular': 'مفضل',
+  'Top Ordered': 'كثير الطلب',
+  'Three Ways to': 'ثلاث طرق',
+  'Get Your Food': 'للحصول على طلبك',
+  'Order through your favourite platform or talk to us directly on WhatsApp for custom requests, large orders, and special deals. Average delivery time: 28 minutes.': 'اطلب عبر منصتك المفضلة أو تواصل معنا مباشرة عبر واتساب للطلبات الخاصة والطلبات الكبيرة والعروض. متوسط وقت التوصيل: 28 دقيقة.',
+  'Order through your favourite platform or talk to us directly on WhatsApp for custom requests, large orders, and special deals. Average delivery time:': 'اطلب عبر منصتك المفضلة أو تواصل معنا مباشرة عبر واتساب للطلبات الخاصة والطلبات الكبيرة والعروض. متوسط وقت التوصيل:',
+  'Order through your favourite platform or talk to us directly on WhatsApp': 'اطلب عبر منصتك المفضلة أو تواصل معنا مباشرة عبر واتساب',
+  'for custom requests, large orders, and special deals. Average delivery time:': 'للطلبات الخاصة والطلبات الكبيرة والعروض. متوسط وقت التوصيل:',
+  '28 minutes': '28 دقيقة',
+  'Order on Talabat': 'اطلب عبر طلبات',
+  '4.7 ★ · 500+ reviews · Fast delivery': '4.7 ★ · أكثر من 500 تقييم · توصيل سريع',
+  'Order on Deliveroo': 'اطلب عبر دليفرو',
+  'Real-time tracking · Avg 32 min': 'تتبع مباشر · متوسط 32 دقيقة',
+  'WhatsApp Direct Order': 'طلب مباشر عبر واتساب',
+  '+971 55 101 9060 · Custom orders welcome': '+971 55 101 9060 · نرحب بالطلبات الخاصة',
+  'Find Us & Contact': 'موقعنا وطرق التواصل',
+  'Address': 'العنوان',
+  'VIRIDISPODIUM, MADINATHIND4 Damac Hills 2, Dubai - UAE': 'فيريديسبوديوم، مدينة هند 4 داماك هيلز 2، دبي - الإمارات',
+  'Open Google Location': 'افتح الموقع على جوجل',
+  'Landline': 'الهاتف الأرضي',
+  'Opening Hours': 'ساعات العمل',
+  'Monday – Thursday': 'الاثنين - الخميس',
+  'Friday': 'الجمعة',
+  'Saturday – Sunday': 'السبت - الأحد',
+  'Delivery Available': 'التوصيل متاح',
+  'All hours ✓': 'طوال ساعات العمل ✓',
+  'Order Now': 'اطلب الآن',
+  'Visit Us': 'زورونا',
+  'Open in Maps': 'افتح الخريطة',
+  'Nine world cuisines under one roof in the heart of Damac Hills 2, Dubai. Indian, Grills, Shawarma, Indo-Chinese, Biryani, Arabic, Pasta, Burgers & Thai. Rated 4.7 ★ on Talabat with 500+ verified reviews.': 'تسعة مطابخ عالمية تحت سقف واحد في قلب داماك هيلز 2، دبي. هندي، مشاوي، شاورما، هندي صيني، برياني، عربي، باستا، برجر وتايلاندي. تقييم 4.7 ★ على طلبات مع أكثر من 500 تقييم موثّق.',
+  'Designed & Developed by Ahmed Farouk': 'تم التصميم والتطوير بواسطة أحمد فاروق',
+  'Place Order': 'إتمام الطلب',
+  'Your Items': 'طلباتك',
+  'Clear all': 'مسح الكل',
+  'No items yet — quick-select below or add from menu': 'لا توجد عناصر بعد - اختر سريعًا من الأسفل أو أضف من القائمة',
+  'Estimated Total': 'الإجمالي التقريبي',
+  'Quick-add popular items': 'إضافة سريعة للأطباق الشائعة',
+  'Place Your Order': 'أكمل طلبك',
+  "We'll confirm via WhatsApp within minutes": 'سنؤكد طلبك عبر واتساب خلال دقائق',
+  'Your Name': 'الاسم',
+  'Phone Number': 'رقم الهاتف',
+  'Delivery Address': 'عنوان التوصيل',
+  'Special Instructions': 'تعليمات خاصة',
+  '(optional)': '(اختياري)',
+  'Send Order via WhatsApp': 'إرسال الطلب عبر واتساب',
+  '✉️ Send via Email instead': 'إرسال عبر البريد بدلًا من ذلك',
+  "No payment required — we'll confirm and provide total before delivery.": 'لا يلزم الدفع الآن - سنؤكد الطلب والإجمالي قبل التوصيل.',
+  'Order Sent!': 'تم إرسال الطلب!',
+  "Your order has been sent to our team on WhatsApp. We'll confirm and provide an ETA within minutes.": 'تم إرسال طلبك إلى فريقنا عبر واتساب. سنؤكد الطلب ونرسل وقت الوصول المتوقع خلال دقائق.',
+  'Your order has been sent to our team on WhatsApp.': 'تم إرسال طلبك إلى فريقنا عبر واتساب.',
+  "We'll confirm and provide an ETA within minutes.": 'سنؤكد الطلب ونرسل وقت الوصول المتوقع خلال دقائق.',
+  'Back to Menu': 'العودة إلى القائمة',
+  'Not provided': 'غير متوفر'
+};
+
+const AR_ATTR = {
+  placeholder: {
+    'e.g. Ahmed Al Rashid': 'مثال: أحمد الراشد',
+    '+971 50 000 0000': '+971 50 000 0000',
+    'Villa/Apt, building, street — Damac Hills 2': 'فيلا/شقة، المبنى، الشارع - داماك هيلز 2',
+    'e.g. No onions, extra spicy, leave at door…': 'مثال: بدون بصل، حار زيادة، اترك الطلب عند الباب...'
+  },
+  'aria-label': {
+    'Switch language': 'تبديل اللغة',
+    'Switch to Arabic': 'التبديل إلى العربية',
+    'Switch to English': 'Switch to English',
+    'Main navigation': 'التنقل الرئيسي',
+    'View cart and place order': 'عرض السلة وإتمام الطلب',
+    'Close': 'إغلاق'
+  }
+};
+
+function translatePhrase(text) {
+  if (currentLang !== 'ar') return text;
+  return AR_TEXT[normalizeText(text)] || text;
+}
+
+function getStoredLanguage() {
+  try {
+    return window.localStorage?.getItem(LANG_KEY) || 'en';
+  } catch (_) {
+    return 'en';
+  }
+}
+
+function storeLanguage(lang) {
+  try {
+    window.localStorage?.setItem(LANG_KEY, lang);
+  } catch (_) {}
+}
+
+function translateTextNode(node) {
+  const raw = textOriginals.get(node) || node.nodeValue;
+  if (!textOriginals.has(node)) textOriginals.set(node, raw);
+  const key = normalizeText(raw);
+  const translated = AR_TEXT[key];
+  if (currentLang === 'ar' && translated) {
+    const leading = raw.match(/^\s*/)?.[0] || '';
+    const trailing = raw.match(/\s*$/)?.[0] || '';
+    node.nodeValue = leading + translated + trailing;
+  } else if (currentLang === 'en') {
+    node.nodeValue = raw;
+  }
+}
+
+function translateAttributes(root = document.body) {
+  const selector = '[placeholder],[aria-label],[alt],[title]';
+  const nodes = [];
+  if (root.nodeType === 1 && root.matches?.(selector)) nodes.push(root);
+  if (root.querySelectorAll) nodes.push(...root.querySelectorAll(selector));
+
+  nodes.forEach(el => {
+    ['placeholder', 'aria-label', 'alt', 'title'].forEach(attr => {
+      if (!el.hasAttribute(attr)) return;
+      let stored = attrOriginals.get(el);
+      if (!stored) {
+        stored = {};
+        attrOriginals.set(el, stored);
+      }
+      if (!stored[attr]) stored[attr] = el.getAttribute(attr);
+      const original = stored[attr];
+      const translated = AR_ATTR[attr]?.[original] || AR_TEXT[normalizeText(original)];
+      if (currentLang === 'ar' && translated) el.setAttribute(attr, translated);
+      if (currentLang === 'en') el.setAttribute(attr, original);
+    });
+  });
+}
+
+function translateStaticPage(root = document.body) {
+  const walkerRoot = root.nodeType === 3 ? root.parentElement : root;
+  if (!walkerRoot) return;
+
+  const walker = document.createTreeWalker(walkerRoot, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const parent = node.parentElement;
+      if (!parent || parent.closest('script,style,svg,noscript,code')) return NodeFilter.FILTER_REJECT;
+      return normalizeText(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  });
+
+  if (root.nodeType === 3) translateTextNode(root);
+  let node;
+  while ((node = walker.nextNode())) translateTextNode(node);
+  translateAttributes(walkerRoot);
+}
+
+function updateLanguageButton() {
+  const btn = document.querySelector('.nav-lang');
+  if (!btn) return;
+  const spans = btn.querySelectorAll('span');
+  btn.classList.toggle('is-ar', currentLang === 'ar');
+  btn.setAttribute('aria-label', currentLang === 'ar' ? 'Switch to English' : 'Switch to Arabic');
+  if (spans[1]) spans[1].textContent = currentLang === 'ar' ? 'AR' : 'EN';
+  if (spans[3]) spans[3].textContent = currentLang === 'ar' ? 'English' : 'العربية';
+}
+
+function applyLanguage(lang) {
+  currentLang = lang === 'ar' ? 'ar' : 'en';
+  document.documentElement.lang = currentLang === 'ar' ? 'ar' : 'en';
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.body.classList.toggle('rtl', currentLang === 'ar');
+  storeLanguage(currentLang);
+  translateStaticPage();
+  updateLanguageButton();
+  if (window.__cartReady && typeof updateCartUI === 'function') updateCartUI();
+}
+
+function setupLanguageToggle() {
+  const btn = document.querySelector('.nav-lang');
+  if (!btn) return;
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    applyLanguage(currentLang === 'ar' ? 'en' : 'ar');
+  });
+}
+
+const i18nObserver = new MutationObserver(mutations => {
+  if (currentLang !== 'ar') return;
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (node.nodeType === 1 || node.nodeType === 3) translateStaticPage(node);
+    });
+  });
+});
+
+/* ─── Premium menu imagery ─── */
+const MENU_CATEGORY_IMAGES = {
+  'c-indian': 'assets/images/menu/food-41.webp',
+  'c-grills': 'assets/images/menu/food-31.webp',
+  'c-shawarma': 'assets/images/menu/food-79.webp',
+  'c-indochinese': 'assets/images/menu/food-57.webp',
+  'c-biryani': 'assets/images/menu/food-65.webp',
+  'c-arabic': 'assets/images/menu/food-70.webp',
+  'c-pasta': 'assets/images/menu/food-39.webp',
+  'c-burgers': 'assets/images/menu/food-59.webp',
+  'c-thai': 'assets/images/menu/food-51.webp'
+};
+
+const MENU_ITEM_IMAGES = {
+  'Butter Chicken': 'assets/images/menu/food-41.webp',
+  'Chicken Tikka Masala': 'assets/images/menu/food-78.webp',
+  'Dal Makhani': 'assets/images/menu/food-62.webp',
+  'Palak Paneer': 'assets/images/menu/food-58.webp',
+  'Butter Naan': 'assets/images/menu/food-44.webp',
+  'Garlic Naan': 'assets/images/menu/food-27.webp',
+  'Mixed Chicken Grill': 'assets/images/menu/food-31.webp',
+  'Whole Grilled Chicken': 'assets/images/menu/food-63.webp',
+  'Grilled Fish': 'assets/images/menu/food-64.webp',
+  'Lamb Kebab': 'assets/images/menu/food-61.webp',
+  'Chicken Shawarma — Regular': 'assets/images/menu/food-79.webp',
+  'Chicken Shawarma — Spicy': 'assets/images/menu/food-80.webp',
+  'Lamb Shawarma': 'assets/images/menu/food-26.webp',
+  'Shawarma Platter': 'assets/images/menu/food-47.webp',
+  'Chicken Hakka Noodles': 'assets/images/menu/food-69.webp',
+  'Beef Hakka Noodles': 'assets/images/menu/food-36.webp',
+  'Chicken Fried Rice': 'assets/images/menu/food-38.webp',
+  'Chicken Manchurian': 'assets/images/menu/food-57.webp',
+  'Chicken Biryani': 'assets/images/menu/food-65.webp',
+  'Mutton Biryani': 'assets/images/menu/food-60.webp',
+  'Veg Biryani': 'assets/images/menu/food-66.webp',
+  'Prawn Biryani': 'assets/images/menu/food-74.webp',
+  'Chicken Kabsa': 'assets/images/menu/food-75.webp',
+  'Freekeh with Chicken': 'assets/images/menu/food-68.webp',
+  'Hummus with Olive Oil': 'assets/images/menu/food-54.webp',
+  'Fattoush Salad': 'assets/images/menu/food-10.webp',
+  'Pasta Arrabiata': 'assets/images/menu/food-35.webp',
+  'Chicken Alfredo': 'assets/images/menu/food-39.webp',
+  'Classic Chicken Burger': 'assets/images/menu/food-22.webp',
+  'Beef Smash Burger': 'assets/images/menu/food-59.webp',
+  'Pad Thai': 'assets/images/menu/food-76.webp',
+  'Thai Green Curry': 'assets/images/menu/food-51.webp'
+};
+
+function enhanceMenuImagery() {
+  document.querySelectorAll('.menu-chapter').forEach(chapter => {
+    const imgSrc = MENU_CATEGORY_IMAGES[chapter.id];
+    if (!imgSrc) return;
+
+    const title = chapter.querySelector('.chapter-title')?.textContent?.trim() || 'Cuisine';
+    const icon = chapter.querySelector('.chapter-icon');
+
+    if (icon && !icon.querySelector('img')) {
+      icon.innerHTML = `<img src="${imgSrc}" alt="${title}" loading="lazy" onload="this.classList.add('loaded')">`;
+    }
+
+    chapter.querySelectorAll('.mi').forEach(card => {
+      if (card.querySelector('.mi-img-wrap')) return;
+      const name = card.querySelector('.mi-name')?.textContent?.trim() || title;
+      const itemImgSrc = MENU_ITEM_IMAGES[name] || imgSrc;
+      const wrap = document.createElement('div');
+      wrap.className = 'mi-img-wrap';
+      wrap.innerHTML = `<img class="mi-img" src="${itemImgSrc}" alt="${name}" loading="lazy" decoding="async" onload="this.classList.add('loaded')">`;
+      card.prepend(wrap);
+    });
+  });
+}
+
+enhanceMenuImagery();
+
+function initializeOrderItemData() {
+  document.querySelectorAll('.mi, .dish-card').forEach(card => {
+    const name = card.querySelector('.mi-name, .dish-name')?.textContent.trim();
+    const price = card.querySelector('.mi-price, .dish-price')?.textContent.replace(/[^0-9]/g,'') || '0';
+    if (name && !card.dataset.itemName) card.dataset.itemName = name;
+    if (price && !card.dataset.itemPrice) card.dataset.itemPrice = price;
+  });
+}
+
+initializeOrderItemData();
+setupLanguageToggle();
+i18nObserver.observe(document.body, { childList:true, subtree:true });
+applyLanguage(getStoredLanguage());
+
+/* ════════════════════════════════════════
+   ORDER SYSTEM — v3.1 patch
+   Pure frontend · WhatsApp + email fallback
+   Netlify-safe · No backend · No payments
+════════════════════════════════════════ */
+
+const WA_NUMBER = '971551019060';   // Restaurant WhatsApp
+const EMAIL_TO  = 'orders@coolgrand.ae'; // Fallback email
+
+/* ── Menu catalogue (mirrors HTML menu) ── */
+const MENU = [
+  // Indian
+  { name:'Butter Chicken',        price:35, cat:'Indian' },
+  { name:'Chicken Tikka Masala',  price:38, cat:'Indian' },
+  { name:'Dal Makhani',           price:28, cat:'Indian' },
+  { name:'Palak Paneer',          price:30, cat:'Indian' },
+  { name:'Butter Naan',           price:8,  cat:'Indian' },
+  { name:'Garlic Naan',           price:10, cat:'Indian' },
+  // Grills
+  { name:'Mixed Chicken Grill',   price:55, cat:'Grills' },
+  { name:'Whole Grilled Chicken', price:45, cat:'Grills' },
+  { name:'Grilled Fish',          price:50, cat:'Grills' },
+  { name:'Lamb Kebab',            price:48, cat:'Grills' },
+  // Shawarma
+  { name:'Chicken Shawarma — Regular', price:18, cat:'Shawarma' },
+  { name:'Chicken Shawarma — Spicy',   price:18, cat:'Shawarma' },
+  { name:'Lamb Shawarma',              price:22, cat:'Shawarma' },
+  { name:'Shawarma Platter',           price:32, cat:'Shawarma' },
+  // Indo-Chinese
+  { name:'Chicken Hakka Noodles', price:28, cat:'Indo-Chinese' },
+  { name:'Beef Hakka Noodles',    price:30, cat:'Indo-Chinese' },
+  { name:'Chicken Fried Rice',    price:25, cat:'Indo-Chinese' },
+  { name:'Chicken Manchurian',    price:32, cat:'Indo-Chinese' },
+  // Biryani
+  { name:'Chicken Biryani',       price:30, cat:'Biryani' },
+  { name:'Mutton Biryani',        price:38, cat:'Biryani' },
+  { name:'Veg Biryani',           price:25, cat:'Biryani' },
+  { name:'Prawn Biryani',         price:42, cat:'Biryani' },
+  // Arabic
+  { name:'Chicken Kabsa',         price:35, cat:'Arabic' },
+  { name:'Freekeh with Chicken',  price:32, cat:'Arabic' },
+  { name:'Hummus with Olive Oil', price:15, cat:'Arabic' },
+  { name:'Fattoush Salad',        price:18, cat:'Arabic' },
+  // Pasta
+  { name:'Pasta Arrabiata',       price:30, cat:'Pasta' },
+  { name:'Chicken Alfredo',       price:35, cat:'Pasta' },
+  // Burgers
+  { name:'Classic Chicken Burger',price:28, cat:'Burgers' },
+  { name:'Beef Smash Burger',     price:35, cat:'Burgers' },
+  // Thai
+  { name:'Pad Thai',              price:32, cat:'Thai' },
+  { name:'Thai Green Curry',      price:35, cat:'Thai' },
+];
+
+/* Quick-add items (top 9 shown in modal) */
+const QUICK_ITEMS = [
+  'Butter Chicken','Chicken Shawarma — Spicy','Chicken Hakka Noodles',
+  'Chicken Biryani','Butter Naan','Mixed Chicken Grill',
+  'Pad Thai','Chicken Alfredo','Classic Chicken Burger'
+];
+
+/* ── Cart state ── */
+let cart = []; // [{name, price, qty}]
+window.__cartReady = true;
+
+function findInCart(name) { return cart.findIndex(i => i.name === name); }
+
+function addToCart(name, price) {
+  const idx = findInCart(name);
+  if (idx > -1) {
+    cart[idx].qty++;
+  } else {
+    cart.push({ name, price: parseInt(price, 10), qty: 1 });
+  }
+  updateCartUI();
+  showToast(currentLang === 'ar' ? `تمت إضافة ${translatePhrase(name)} إلى الطلب` : `${name} added to order`);
+  showCartFab();
+}
+
+function removeFromCart(name) {
+  cart = cart.filter(i => i.name !== name);
+  updateCartUI();
+  if (!cart.length) hideCartFab();
+}
+
+function clearCart() {
+  cart = [];
+  updateCartUI();
+  hideCartFab();
+}
+
+function cartTotal() { return cart.reduce((s, i) => s + i.price * i.qty, 0); }
+function cartCount() { return cart.reduce((s, i) => s + i.qty, 0); }
+function cartCountLabel(count) {
+  if (currentLang !== 'ar') return `Order (${count} item${count > 1 ? 's' : ''})`;
+  if (count === 1) return 'الطلب (صنف واحد)';
+  if (count === 2) return 'الطلب (صنفان)';
+  return `الطلب (${count} أصناف)`;
+}
+
+/* ── UI sync ── */
+function updateCartUI() {
+  const list   = document.getElementById('omCartList');
+  const footer = document.getElementById('omCartFooter');
+  const total  = document.getElementById('omCartTotal');
+  const fabCnt = document.getElementById('cartFabCount');
+  const fabTxt = document.getElementById('cartFabText');
+  const badge  = document.getElementById('navCartBadge');
+
+  const count = cartCount();
+
+  // Cart list
+  const items = cart.filter(i => i.qty > 0);
+  if (!list || !footer || !total || !fabCnt || !fabTxt) return;
+
+  list.innerHTML = '';
+
+  if (items.length) {
+    footer.style.display = 'flex';
+    total.textContent = `AED ${cartTotal()}`;
+
+    items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'om-cart-item';
+      const displayName = translatePhrase(item.name);
+      const qtyText = item.qty > 1 ? `${item.qty}× ` : '';
+      row.innerHTML = `
+        <span class="om-cart-item-name">${qtyText}${displayName}</span>
+        <span class="om-cart-item-price">AED ${item.price * item.qty}</span>
+        <button class="om-cart-item-remove" aria-label="${currentLang === 'ar' ? 'حذف' : 'Remove'}" onclick="removeFromCart('${item.name.replace(/'/g,"\\'")}')">✕</button>
+      `;
+      list.appendChild(row);
+    });
+  } else {
+    footer.style.display = 'none';
+    total.textContent = 'AED 0';
+    const empty = document.createElement('div');
+    empty.className = 'om-cart-empty';
+    empty.id = 'omCartEmpty';
+    empty.textContent = translatePhrase('No items yet — quick-select below or add from menu');
+    list.appendChild(empty);
+  }
+
+  // FAB
+  if (count > 0) {
+    fabCnt.textContent = count;
+    fabCnt.style.display = 'flex';
+    fabTxt.textContent = cartCountLabel(count);
+  } else {
+    fabCnt.style.display = 'none';
+    fabTxt.textContent = translatePhrase('Place Order');
+  }
+
+  // Nav badge
+  if (badge) {
+    badge.textContent = count;
+    badge.classList.toggle('has-items', count > 0);
+  }
+
+  // Quick chips — update in-cart state
+  document.querySelectorAll('.om-quick-chip').forEach(chip => {
+    const inCart = findInCart(chip.dataset.name) > -1;
+    chip.classList.toggle('in-cart', inCart);
+    const item = MENU.find(m => m.name === chip.dataset.name);
+    if (item) {
+      chip.innerHTML = `${translatePhrase(item.name)} <span class="om-quick-chip-price">AED ${item.price}</span>`;
+    }
+  });
+
+  // Menu + featured buttons quantity badges
+  document.querySelectorAll('.mi, .dish-card').forEach(card => {
+    const name = card.dataset.itemName || card.querySelector('.mi-name, .dish-name')?.textContent.trim();
+    const btn = card.querySelector('.mi-btn, .dish-add');
+    if (!name || !btn) return;
+    const item = cart.find(i => i.name === name);
+    btn.setAttribute('data-qty', item ? String(item.qty) : '0');
+  });
+}
+
+function showCartFab() {
+  document.getElementById('cartFab').classList.add('visible');
+}
+function hideCartFab() {
+  if (!cartCount()) document.getElementById('cartFab').classList.remove('visible');
+}
+
+/* ── Quick-add chips (populate on first open) ── */
+function buildQuickChips() {
+  const grid = document.getElementById('omQuickGrid');
+  if (grid.children.length) return; // already built
+  QUICK_ITEMS.forEach(name => {
+    const item = MENU.find(m => m.name === name);
+    if (!item) return;
+    const chip = document.createElement('button');
+    chip.className = 'om-quick-chip' + (findInCart(name) > -1 ? ' in-cart' : '');
+    chip.dataset.name = name;
+    chip.innerHTML = `${translatePhrase(name)} <span class="om-quick-chip-price">AED ${item.price}</span>`;
+    chip.addEventListener('click', () => {
+      addToCart(item.name, item.price);
+    });
+    grid.appendChild(chip);
+  });
+}
+
+/* ── Modal open / close ── */
+function openOrderModal() {
+  const modal = document.getElementById('orderModal');
+  document.getElementById('omSuccess').classList.remove('show');
+  document.getElementById('omFormBody').style.display = '';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  buildQuickChips();
+  updateCartUI();
+  setTimeout(() => document.getElementById('omName').focus(), 350);
+}
+
+function closeOrderModal() {
+  document.getElementById('orderModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close on overlay click
+document.getElementById('orderModal').addEventListener('click', function(e) {
+  if (e.target === this) closeOrderModal();
+});
+
+// Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeOrderModal();
+});
+
+/* ── Validation ── */
+function validateForm() {
+  let ok = true;
+  ['omName','omPhone','omAddress'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('error');
+    if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+  });
+  return ok;
+}
+
+/* ── Build order message ── */
+function buildMessage() {
+  const name    = document.getElementById('omName').value.trim();
+  const phone   = document.getElementById('omPhone').value.trim();
+  const address = document.getElementById('omAddress').value.trim();
+  const notes   = document.getElementById('omNotes').value.trim();
+  const isAr = currentLang === 'ar';
+
+  const itemLines = cart.length
+    ? cart.map(i => `  • ${i.qty > 1 ? i.qty + '× ' : ''}${translatePhrase(i.name)} — AED ${i.price * i.qty}`).join('\n')
+    : (isAr ? '  (لا توجد عناصر محددة - يرجى التأكيد عبر واتساب)' : '  (No items selected — please confirm over WhatsApp)');
+
+  const englishLines = [
+    '🍽️ *New Order — Cool Grand Restaurant*',
+    '────────────────────────',
+    `👤 *Name:* ${name}`,
+    `📞 *Phone:* ${phone}`,
+    `📍 *Address:* ${address}`,
+    '',
+    `🛒 *Items Ordered:*`,
+    itemLines,
+    '',
+    `💰 *Estimated Total:* AED ${cartTotal()}`,
+    notes ? `📝 *Notes:* ${notes}` : '',
+    '────────────────────────',
+    '✅ Please confirm this order and provide an ETA.',
+  ];
+
+  const arabicLines = [
+    '🍽️ *طلب جديد — Cool Grand Restaurant*',
+    '────────────────────────',
+    `👤 *الاسم:* ${name}`,
+    `📞 *الهاتف:* ${phone}`,
+    `📍 *العنوان:* ${address}`,
+    '',
+    '🛒 *الأصناف المطلوبة:*',
+    itemLines,
+    '',
+    `💰 *الإجمالي التقريبي:* AED ${cartTotal()}`,
+    notes ? `📝 *ملاحظات:* ${notes}` : '',
+    '────────────────────────',
+    '✅ يرجى تأكيد الطلب وإرسال وقت الوصول المتوقع.',
+  ];
+
+  return (isAr ? arabicLines : englishLines).filter(l => l !== undefined && l !== '').join('\n');
+}
+
+/* ── Submit via WhatsApp ── */
+function submitWhatsApp() {
+  if (!validateForm()) {
+    const firstErr = document.querySelector('.om-input.error');
+    if (firstErr) firstErr.focus();
+    return;
+  }
+  const msg = buildMessage();
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank', 'noopener');
+
+  // Show success
+  document.getElementById('omFormBody').style.display = 'none';
+  document.getElementById('omSuccess').classList.add('show');
+
+  // Reset after 8 s if modal still open
+  setTimeout(() => {
+    cart = [];
+    updateCartUI();
+    hideCartFab();
+    // Reset form
+    ['omName','omPhone','omAddress','omNotes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('omQuickGrid').innerHTML = '';
+  }, 8000);
+}
+
+/* ── Email fallback ── */
+function submitEmail() {
+  const isAr = currentLang === 'ar';
+  const name    = document.getElementById('omName').value.trim() || (isAr ? '(غير متوفر)' : '(not provided)');
+  const phone   = document.getElementById('omPhone').value.trim() || (isAr ? '(غير متوفر)' : '(not provided)');
+  const address = document.getElementById('omAddress').value.trim() || (isAr ? '(غير متوفر)' : '(not provided)');
+  const notes   = document.getElementById('omNotes').value.trim() || (isAr ? 'لا يوجد' : 'None');
+
+  const itemLines = cart.length
+    ? cart.map(i => `${i.qty > 1 ? i.qty + 'x ' : ''}${translatePhrase(i.name)} — AED ${i.price * i.qty}`).join('%0A')
+    : (isAr ? '(لا توجد عناصر محددة)' : '(No items specified)');
+
+  const subject = encodeURIComponent(isAr ? 'طلب طعام جديد — Cool Grand Restaurant' : 'New Food Order — Cool Grand Restaurant');
+  const body = encodeURIComponent(isAr ? [
+    'طلب جديد — Cool Grand Restaurant',
+    '---',
+    `الاسم: ${name}`,
+    `الهاتف: ${phone}`,
+    `العنوان: ${address}`,
+    '',
+    'الأصناف المطلوبة:',
+  ].join('\n') : [
+    'New Order — Cool Grand Restaurant',
+    '---',
+    `Name: ${name}`,
+    `Phone: ${phone}`,
+    `Address: ${address}`,
+    '',
+    'Items Ordered:',
+  ].join('\n')) + '%0A' + itemLines + encodeURIComponent(isAr ? `\n\nالإجمالي التقريبي: AED ${cartTotal()}\nملاحظات: ${notes}` : `\n\nEstimated Total: AED ${cartTotal()}\nNotes: ${notes}`);
+
+  window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
+}
+
+/* ── Event delegation: intercept all + buttons on menu items and dish cards ── */
+document.addEventListener('click', function(e) {
+  const miBtn = e.target.closest('.mi-btn');
+  const dishAdd = e.target.closest('.dish-add');
+
+  if (miBtn) {
+    e.preventDefault();
+    const mi = miBtn.closest('.mi');
+    if (mi) {
+      const name  = mi.dataset.itemName || mi.querySelector('.mi-name')?.textContent.trim() || 'Item';
+      const price = mi.dataset.itemPrice || mi.querySelector('.mi-price')?.textContent.replace(/[^0-9]/g,'') || '0';
+      addToCart(name, parseInt(price, 10));
+    }
+  }
+
+  if (dishAdd) {
+    e.preventDefault();
+    const card = dishAdd.closest('.dish-card');
+    if (card) {
+      const name  = card.dataset.itemName || card.querySelector('.dish-name')?.textContent.trim() || 'Dish';
+      const price = card.dataset.itemPrice || card.querySelector('.dish-price')?.textContent.replace(/[^0-9]/g,'') || '0';
+      addToCart(name, parseInt(price, 10));
+    }
+  }
+});
+
+/* ── Wire nav "Order Now" button to open modal ── */
+document.querySelector('.nav-order')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  openOrderModal();
+});
+
+/* ── Wrap nav order btn with badge ── */
+(function() {
+  const btn = document.querySelector('.nav-order');
+  if (!btn) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'nav-order-wrap';
+  btn.parentNode.insertBefore(wrap, btn);
+  wrap.appendChild(btn);
+  const badge = document.createElement('span');
+  badge.className = 'nav-cart-badge'; badge.id = 'navCartBadge'; badge.textContent = '0';
+  wrap.appendChild(badge);
+})();
+
+/* FAB scroll: merged into unified RAF handler above */
+</script>
+</body>
+</html>
