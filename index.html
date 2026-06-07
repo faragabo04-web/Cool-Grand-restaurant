@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="style.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#FAFAF7">
 <meta name="color-scheme" content="light">
 <title>Cool Grand Restaurant — Damac Hills 2, Dubai</title>
+<meta name="description" content="Cool Grand Restaurant in Damac Hills 2, Dubai serves Indian curries, Arabic grills, shawarma, biryani, Indo-Chinese, pasta, burgers and Thai dishes for dine-in, takeaway and delivery.">
+<meta property="og:title" content="Cool Grand Restaurant — Damac Hills 2, Dubai">
+<meta property="og:description" content="Nine world cuisines under one roof in Dubai: Indian, Arabic grills, shawarma, biryani, Indo-Chinese, pasta, burgers and Thai.">
+<meta property="og:type" content="website">
 <!-- Resource hints: DNS + connections for CDN assets -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +18,18 @@
 
 <!-- Slimmed font: only weights actually used (700,900 normal + 400 italic) -->
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" onload="this.rel='stylesheet'">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"></noscript>
 
 <!-- Preload LCP hero image (critical path) -->
-<link rel="preload" as="image" href="assets/images/cool-grand-hero-premium.png" fetchpriority="high">
+<link
+  rel="preload"
+  as="image"
+  href="assets/images/cool-grand-hero-premium.webp"
+  imagesrcset="assets/images/cool-grand-hero-premium-1280.webp 1280w, assets/images/cool-grand-hero-premium.webp 1870w"
+  imagesizes="(max-width: 900px) 100vw, 58vw"
+  fetchpriority="high"
+  type="image/webp"
+>
 
 <style>
 /* ═══════════════════════════════════
@@ -40,7 +50,7 @@
 
   --text:      #1A1510;
   --text-2:    #5E5248;
-  --text-3:    #9C8E80;
+  --text-3:    #76685D;
   --border:    #E5DDD2;
   --border-2:  #D4C8BA;
 
@@ -514,7 +524,7 @@ button { cursor:pointer; font-family:inherit; border:none; }
 .hero-right::before {
   content:'';
   position:absolute; inset:-24px;
-  background:url("assets/images/cool-grand-hero-premium.png") center/cover no-repeat;
+  background:url("assets/images/cool-grand-hero-premium-1280.webp") center/cover no-repeat;
   filter:blur(18px) saturate(1.04) contrast(1.02);
   opacity:.6;
   transform:scale(1.06);
@@ -1116,6 +1126,7 @@ footer {
   color:var(--amber-l);
   transform:translateY(-2px);
 }
+.foot-col h3,
 .foot-col h4 {
   font-size:.62rem; font-weight:700; letter-spacing:3px;
   text-transform:uppercase; color:rgba(240,235,228,.4);
@@ -1522,7 +1533,9 @@ html[dir="rtl"] .delivery-text p {
   <div class="hero-right">
     <img
       class="hero-img"
-      src="assets/images/cool-grand-hero-premium.png"
+      src="assets/images/cool-grand-hero-premium.webp"
+      srcset="assets/images/cool-grand-hero-premium-1280.webp 1280w, assets/images/cool-grand-hero-premium.webp 1870w"
+      sizes="(max-width: 900px) 100vw, 58vw"
       alt="Cool Grand Restaurant premium dining counter in Dubai"
       loading="eager"
       fetchpriority="high"
@@ -1652,7 +1665,7 @@ html[dir="rtl"] .delivery-text p {
     <ul class="sidebar-nav" role="list">
       <li class="sidebar-nav-item">
         <button class="sidebar-nav-btn active" onclick="sideNav('cuisines',this)" aria-current="true">
-          <span class="snb-icon"><img src="assets/images/google-cool-grand-photo-01.jpg" alt="" loading="lazy"></span> All Cuisines
+          <span class="snb-icon"><img src="assets/images/google-cool-grand-photo-01-thumb.webp" alt="" loading="lazy"></span> All Cuisines
           <span class="snb-count">9</span>
         </button>
       </li>
@@ -2396,7 +2409,7 @@ html[dir="rtl"] .delivery-text p {
         </div>
       </div>
       <div class="foot-col">
-        <h4>Cuisines</h4>
+        <h3>Cuisines</h3>
         <ul>
           <li><a href="#c-indian">Indian</a></li>
           <li><a href="#c-grills">Grills</a></li>
@@ -2410,7 +2423,7 @@ html[dir="rtl"] .delivery-text p {
         </ul>
       </div>
       <div class="foot-col">
-        <h4>Order Now</h4>
+        <h3>Order Now</h3>
         <ul>
           <li><a href="https://www.talabat.com/uae/cool-grand-restaurant" target="_blank" rel="noopener"><span class="foot-link-icon">ta</span>Talabat</a></li>
           <li><a href="https://deliveroo.ae/menu/dubai/damac-hills-two/cool-grand-restaurant" target="_blank" rel="noopener"><span class="foot-link-icon">roo</span>Deliveroo</a></li>
@@ -2419,7 +2432,7 @@ html[dir="rtl"] .delivery-text p {
         </ul>
       </div>
       <div class="foot-col">
-        <h4>Visit Us</h4>
+        <h3>Visit Us</h3>
         <ul>
           <li><a href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">VIRIDISPODIUM</a></li>
           <li><a href="https://www.google.com/maps/place/cool+grand+restaurant/@24.9846577,55.3925978,19z/data=!4m6!3m5!1s0x3e5f7b9eb0455ccd:0x87ffec22dee4dc7e!8m2!3d24.9846327!4d55.3929782!16s%2Fg%2F11vc2d0zxs?entry=ttu&amp;g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">MADINATHIND4</a></li>

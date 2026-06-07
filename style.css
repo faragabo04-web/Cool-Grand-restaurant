@@ -17,7 +17,7 @@
  
   --text:      #1A1510;
   --text-2:    #5E5248;
-  --text-3:    #9C8E80;
+  --text-3:    #76685D;
   --border:    #E5DDD2;
   --border-2:  #D4C8BA;
  
@@ -491,7 +491,7 @@ button { cursor:pointer; font-family:inherit; border:none; }
 .hero-right::before {
   content:'';
   position:absolute; inset:-24px;
-  background:url("assets/images/cool-grand-hero-premium.png") center/cover no-repeat;
+  background:url("assets/images/cool-grand-hero-premium-1280.webp") center/cover no-repeat;
   filter:blur(18px) saturate(1.04) contrast(1.02);
   opacity:.6;
   transform:scale(1.06);
@@ -1093,6 +1093,7 @@ footer {
   color:var(--amber-l);
   transform:translateY(-2px);
 }
+.foot-col h3,
 .foot-col h4 {
   font-size:.62rem; font-weight:700; letter-spacing:3px;
   text-transform:uppercase; color:rgba(240,235,228,.4);
